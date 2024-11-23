@@ -1,0 +1,352 @@
+{
+	"file" : "..\\..\\src\\utils.cpp",
+	"func" : "CleanCache::<lambda_ab11869ac7e0ed3c6bc7e4393e58c0ac>::operator ()",
+	"line" : 166,
+	"message" : "cleaning \"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\log\\*.json\"",
+	"sec" : 1732279175,
+	"section" : "utils/clean_cache",
+	"severity" : 4,
+	"usec" : 993370300
+}{
+	"file" : "..\\..\\libaegisub\\common\\io.cpp",
+	"func" : "agi::io::Open",
+	"line" : 34,
+	"message" : "\"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\config.json\"",
+	"sec" : 1732279175,
+	"section" : "agi/io/open/file",
+	"severity" : 4,
+	"usec" : 993370300
+}{
+	"file" : "..\\..\\libaegisub\\common\\io.cpp",
+	"func" : "agi::io::Open",
+	"line" : 34,
+	"message" : "\"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\installer_config.json\"",
+	"sec" : 1732279175,
+	"section" : "agi/io/open/file",
+	"severity" : 4,
+	"usec" : 994321800
+}{
+	"file" : "..\\..\\src\\command\\command.cpp",
+	"func" : "cmd::init_builtin_commands",
+	"line" : 80,
+	"message" : "Populating command map",
+	"sec" : 1732279175,
+	"section" : "command/init",
+	"severity" : 4,
+	"usec" : 994321800
+}{
+	"file" : "..\\..\\src\\utils.cpp",
+	"func" : "CleanCache::<lambda_ab11869ac7e0ed3c6bc7e4393e58c0ac>::operator ()",
+	"line" : 176,
+	"message" : "cache does not need cleaning (maxsize=10485760, cursize=893, maxfiles=100, numfiles=1), exiting",
+	"sec" : 1732279175,
+	"section" : "utils/clean_cache",
+	"severity" : 4,
+	"usec" : 994321800
+}{
+	"file" : "..\\..\\libaegisub\\common\\hotkey.cpp",
+	"func" : "agi::hotkey::Hotkey::Hotkey",
+	"line" : 91,
+	"message" : "Generating hotkeys.",
+	"sec" : 1732279175,
+	"section" : "hotkey/init",
+	"severity" : 4,
+	"usec" : 995352400
+}{
+	"file" : "..\\..\\libaegisub\\common\\io.cpp",
+	"func" : "agi::io::Save::Save",
+	"line" : 49,
+	"message" : "\"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\hotkey.json\"",
+	"sec" : 1732279175,
+	"section" : "agi/io/save/file",
+	"severity" : 4,
+	"usec" : 997321700
+}{
+	"file" : "..\\..\\libaegisub\\common\\mru.cpp",
+	"func" : "agi::MRUManager::MRUManager",
+	"line" : 67,
+	"message" : "Loading MRU List",
+	"sec" : 1732279175,
+	"section" : "agi/mru",
+	"severity" : 4,
+	"usec" : 999356400
+}{
+	"file" : "..\\..\\src\\subtitles_provider_libass.cpp",
+	"func" : "`anonymous-namespace'::msg_callback",
+	"line" : 85,
+	"message" : "Raster: FreeType 2.5.3",
+	"sec" : 1732279176,
+	"section" : "subtitle/provider/libass",
+	"severity" : 4,
+	"usec" : 4368000
+}{
+	"file" : "..\\..\\src\\subtitles_provider_libass.cpp",
+	"func" : "`anonymous-namespace'::msg_callback",
+	"line" : 85,
+	"message" : "Shaper: FriBidi 0.19.6 (SIMPLE)",
+	"sec" : 1732279176,
+	"section" : "subtitle/provider/libass",
+	"severity" : 4,
+	"usec" : 6321200
+}{
+	"file" : "..\\..\\src\\subtitles_provider_libass.cpp",
+	"func" : "`anonymous-namespace'::msg_callback",
+	"line" : 85,
+	"message" : "Initialized",
+	"sec" : 1732279176,
+	"section" : "subtitle/provider/libass",
+	"severity" : 4,
+	"usec" : 6321200
+}{
+	"file" : "..\\..\\src\\subtitles_provider_libass.cpp",
+	"func" : "`anonymous-namespace'::msg_callback",
+	"line" : 85,
+	"message" : "No usable fontconfig configuration file found, using fallback.",
+	"sec" : 1732279176,
+	"section" : "subtitle/provider/libass",
+	"severity" : 4,
+	"usec" : 6321200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 100,
+	"message" : "Entering FrameMain constructor",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 154312200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 111,
+	"message" : "Initializing context controls",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 154312200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 118,
+	"message" : "Initializing context frames",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 154312200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 122,
+	"message" : "Apply saved Maximized state",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 154312200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 125,
+	"message" : "Initialize toolbar",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 154312200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 130,
+	"message" : "Initialize menu bar",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 284335100
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 133,
+	"message" : "Create status bar",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 353329400
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 136,
+	"message" : "Set icon",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 356351300
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 145,
+	"message" : "Create views and inner main window controls",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 356351300
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 187,
+	"message" : "Create background panel",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 356351300
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 190,
+	"message" : "Create subtitles grid",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 359300000
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 193,
+	"message" : "Create video box",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 367300200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 196,
+	"message" : "Create audio box",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 804273400
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 199,
+	"message" : "Create subtitle editing box",
+	"sec" : 1732279176,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 867270600
+}{
+	"file" : "..\\..\\src\\spellchecker_hunspell.cpp",
+	"func" : "HunspellSpellChecker::OnLanguageChanged",
+	"line" : 197,
+	"message" : "\"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\dictionaries\\en_US.dic\"",
+	"sec" : 1732279176,
+	"section" : "dictionary/file",
+	"severity" : 3,
+	"usec" : 957264500
+}{
+	"file" : "..\\..\\libaegisub\\common\\io.cpp",
+	"func" : "agi::io::Open",
+	"line" : 34,
+	"message" : "\"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\dictionaries\\user_en_US.dic\"",
+	"sec" : 1732279176,
+	"section" : "agi/io/open/file",
+	"severity" : 4,
+	"usec" : 996261900
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 202,
+	"message" : "Arrange main sizers",
+	"sec" : 1732279177,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 45259200
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 215,
+	"message" : "Perform layout",
+	"sec" : 1732279177,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 46258800
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::InitContents",
+	"line" : 217,
+	"message" : "Leaving InitContents",
+	"sec" : 1732279177,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 46258800
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 149,
+	"message" : "Set up drag/drop target",
+	"sec" : 1732279177,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 46258800
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 152,
+	"message" : "Load default file",
+	"sec" : 1732279177,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 46258800
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 155,
+	"message" : "Display main window",
+	"sec" : 1732279177,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 72257400
+}{
+	"file" : "..\\..\\src\\frame_main.cpp",
+	"func" : "FrameMain::FrameMain",
+	"line" : 160,
+	"message" : "Leaving FrameMain constructor",
+	"sec" : 1732279177,
+	"section" : "frame_main/init",
+	"severity" : 3,
+	"usec" : 311243100
+}{
+	"file" : "..\\..\\libaegisub\\common\\io.cpp",
+	"func" : "agi::io::Save::Save",
+	"line" : 49,
+	"message" : "\"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\config.json\"",
+	"sec" : 1732279181,
+	"section" : "agi/io/save/file",
+	"severity" : 4,
+	"usec" : 228009600
+}{
+	"file" : "..\\..\\src\\utils.cpp",
+	"func" : "CleanCache::<lambda_ab11869ac7e0ed3c6bc7e4393e58c0ac>::operator ()",
+	"line" : 166,
+	"message" : "cleaning \"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\autosave\\*.AUTOSAVE.ass\"",
+	"sec" : 1732279181,
+	"section" : "utils/clean_cache",
+	"severity" : 4,
+	"usec" : 231009200
+}{
+	"file" : "..\\..\\src\\utils.cpp",
+	"func" : "CleanCache::<lambda_ab11869ac7e0ed3c6bc7e4393e58c0ac>::operator ()",
+	"line" : 176,
+	"message" : "cache does not need cleaning (maxsize=104857600, cursize=0, maxfiles=1000, numfiles=0), exiting",
+	"sec" : 1732279181,
+	"section" : "utils/clean_cache",
+	"severity" : 4,
+	"usec" : 231009200
+}{
+	"file" : "..\\..\\libaegisub\\common\\io.cpp",
+	"func" : "agi::io::Save::Save",
+	"line" : 49,
+	"message" : "\"C:\\Users\\Home\\Desktop\\aegisub-3.2.2-portable-64\\config.json\"",
+	"sec" : 1732283579,
+	"section" : "agi/io/save/file",
+	"severity" : 4,
+	"usec" : 542929700
+}
