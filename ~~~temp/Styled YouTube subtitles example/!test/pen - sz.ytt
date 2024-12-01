@@ -1,0 +1,17 @@
+<!-- Size -->
+<?xml version="1.0" encoding="utf-8"?>
+<timedtext format="3">
+    <head>
+        <wp id="0" ap="0" ah="50" av="50" />
+        
+        <ws id="1" ju="1" pd="0" sd="0" />
+        
+        <pen id="1" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="1" />
+        <pen id="2" sz="200" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="1" />
+    </head>
+
+    <body>
+        <p t="0" d="4000" wp="0" ws="1"><s p="1">sz = 100</s>
+<s p="2">sz = 200</s></p>
+    </body>
+</timedtext>

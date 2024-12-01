@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<StyleOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Style>
+    <Name>Default</Name>
+    <ShadowType>Glow SoftShadow</ShadowType>
+    <IsKaraoke>true</IsKaraoke>
+    <CurrentWordTextColor />
+    <CurrentWordOutlineColor />
+    <CurrentWordShadowColor />
+  </Style>
+  <Style>
+    <Name>Default2</Name>
+    <ShadowType>Glow SoftShadow</ShadowType>
+    <IsKaraoke>false</IsKaraoke>
+    <CurrentWordTextColor />
+    <CurrentWordOutlineColor />
+    <CurrentWordShadowColor />
+  </Style>
+</StyleOptions>

@@ -1,5 +1,24 @@
-.App {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  user-select: none;
+}
+
+body {
+  width: 100dvw;
+  height: 100dvh;
+
+  background-color: #282c34;
+
   text-align: center;
+
+  overflow: hidden;
+}
+
+#App {
+  background-color: red;
 }
 
 .App-logo {

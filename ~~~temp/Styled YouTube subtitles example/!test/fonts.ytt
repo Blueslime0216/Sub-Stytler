@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<timedtext format="3">
+    <head>
+        <wp id="1" ap="1" ah="50" av="0" />
+        <wp id="2" ap="2" ah="100" av="0" />
+        <wp id="3" ap="3" ah="0" av="50" />
+        <wp id="4" ap="4" ah="50" av="50" />
+        <wp id="5" ap="5" ah="100" av="50" />
+        <wp id="6" ap="6" ah="0" av="100" />
+        <wp id="7" ap="7" ah="50" av="100" />
+        
+        <ws id="1" ju="1" pd="0" sd="0" />
+        
+        <pen id="1" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="1" />
+        <pen id="2" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="2" />
+        <pen id="3" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="3" />
+        <pen id="4" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="4" />
+        <pen id="5" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="5" />
+        <pen id="6" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="6" />
+        <pen id="7" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="7" />
+        <pen id="8" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="8" />
+        <pen id="9" sz="100" fc="#FEFEFE" fo="254" bo="0" et="4" ec="#000000" fs="9" />
+    </head>
+
+    <body>
+<p t="1" d="2000" wp="1" ws="1">
+<s></s>
+<s p="1"> fs = 1 </s>
+<s p="1"> [ Courier New ] </s>
+</p>
+<p t="1" d="2000" wp="2" ws="1">
+<s></s>
+<s p="2"> fs = 2 </s>
+<s p="2"> [ Times New Roman ] </s>
+</p>
+<p t="1" d="2000" wp="3" ws="1">
+<s></s>
+<s p="3"> fs = 3 </s>
+<s p="3"> [ Lucida Console ] </s>
+</p>
+<p t="1" d="2000" wp="4" ws="1">
+<s></s>
+<s p="4"> fs = 4 </s>
+<s p="4"> [ Roboto ] </s>
+</p>
+<p t="1" d="2000" wp="5" ws="1">
+<s></s>
+<s p="5"> fs = 5 </s>
+<s p="5"> [ Comic Sans MS ] </s>
+</p>
+<p t="1" d="2000" wp="6" ws="1">
+<s></s>
+<s p="6"> fs = 6 </s>
+<s p="6"> [ Monotype Corsiva ] </s>
+</p>
+<p t="1" d="2000" wp="7" ws="1">
+<s></s>
+<s p="7"> fs = 7 </s>
+<s p="7"> [ CARROIS GOTHIC SC ] </s>
+</p>
+    </body>
+</timedtext>
