@@ -1,115 +1,145 @@
-import { dir } from "console";
-import React, { useState, useRef } from "react";
-
-const AreaDivideStartDistance = 15; // 분할 시작 거리
-
-// 각 Area의 상태를 나타내는 인터페이스
-interface IAreaState {
-  id: string; // Area의 고유 ID
-  width: number; // Area의 너비
-  height: number; // Area의 높이
-  x: number; // Area의 x 좌표
-  y: number; // Area의 y 좌표
-}
+import React, { useState, useRef, useEffect } from "react";
 
 function IDGen() {
-  return Math.random().toString(36).substring(2, 8);
+  return Math.random().toString(36).substring(2, 9);
 }
 
-const AreaDivider: React.FC = () => {
-  // Area들이 저장될 배열
-  const [areas, setDivs] = useState<IAreaState[]>([
-    { id: IDGen(),
-      width: 400,
-      height: 400,
-      x: 0,
-      y: 0
-    }, // 초기 div 설정
+// 작업 영역을 나타내는 상태를 정의하는 인터페이스
+// 각 영역은 고유한 id와 위치 및 크기 정보를 가짐
+interface IAreaState {
+  id: string; // 고유한 ID (랜덤 문자열)
+  x: number; // X 좌표 (% 단위)
+  y: number; // Y 좌표 (% 단위)
+  width: number; // 너비 (% 단위)
+  height: number; // 높이 (% 단위)
+}
+
+// 영역 분할을 시작하는 거리 상수 (15px)
+const AreaDivideStartDistance = 15;
+
+const WorkspaceDivider: React.FC = () => {
+  // 영역 상태 관리 (초기에는 전체 화면 하나의 영역만 있음)
+  const [areas, setAreas] = useState<IAreaState[]>([
+    { id: IDGen(), x: 0, y: 0, width: 50, height: 50 },
   ]);
+  const [isDividing, setIsDividing] = useState(false); // 현재 분할 중인지 여부
+  const [resizeTarget, setResizeTarget] = useState<string | null>(null); // 크기 조정 중인 영역의 ID
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null); // 드래그 시작 위치
+  const containerRef = useRef<HTMLDivElement>(null); // 작업 영역 컨테이너 참조
 
-  // 컨테이너 참조 (전체 영역을 담는 div)
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // 드래그 시작 시 호출되는 함수
+  // 마우스 다운 이벤트 핸들러 (크기 조정 또는 분할 시작)
   const handleMouseDown = (
     e: React.MouseEvent<HTMLDivElement>,
-    divId: string, // 드래그가 시작된 div의 ID
-    dir: "right" | "left" | "top" | "bottom" // 드래그 방향
+    areaId: string,
+    direction: "left" | "right" | "top" | "bottom"
   ) => {
-    let isAdded:Boolean = false; // 분할 여부
-    const targetDiv = areas.find((div) => div.id === divId); // 드래그된 div 찾기
-    if (!targetDiv || !containerRef.current) return; // div가 없거나 컨테이너가 없으면 종료
+    if (e.ctrlKey) {
+      setIsDividing(true); // 분할 시작 설정
+    }
+    setResizeTarget(areaId); // 크기 조정 대상 영역 설정
+    setDragStart({ x: e.clientX, y: e.clientY }); // 드래그 시작 위치 저장
+    document.addEventListener("mousemove", handleMouseMove); // 마우스 이동 이벤트 리스너 추가
+    document.addEventListener("mouseup", handleMouseUp); // 마우스 업 이벤트 리스너 추가
+  };
 
-    // 컨테이너 영역 정보를 가져옴
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const startX = e.clientX - containerRect.left; // 드래그 시작 x 좌표
-    const startY = e.clientY - containerRect.top; // 드래그 시작 y 좌표
+  // 마우스 이동 이벤트 핸들러 (크기 조정 또는 분할 중)
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDividing && (!resizeTarget || !dragStart || !containerRef.current)) return;
+    if (!resizeTarget || !dragStart || !containerRef.current) return;
 
-    // 마우스 이동 중 발생하는 이벤트
-    const onMouseMove = (e:MouseEvent) => {
-      const newX = e.clientX - containerRect.left; // 현재 마우스 x 좌표
-      const newY = e.clientY - containerRect.top; // 현재 마우스 y 좌표
+    const deltaX = e.clientX - dragStart.x; // X축 이동 거리 계산
+    const deltaY = e.clientY - dragStart.y; // Y축 이동 거리 계산
+    const targetArea = areas.find((area) => area.id === resizeTarget); // 대상 영역 찾기
 
-      const deltaX = newX - startX; // x 방향 변화량
-      const deltaY = newY - startY; // y 방향 변화량
-      
-      // div 상태 업데이트
-      setDivs((prevDivs) => {
-        console.log("setDivs");
-        const updatedDivs = [...prevDivs]; // 기존 div 상태 복사
-        const index = updatedDivs.findIndex((div) => div.id === divId); // 드래그된 div의 인덱스 찾기
-        if (index === -1) return updatedDivs; // 해당 div가 없으면 그대로 반환
+    if (!targetArea) return;
 
-        const target = updatedDivs[index];
+    if (isDividing) {
+      // 분할 중인 경우
+      const isHorizontalSplit = Math.abs(deltaX) > Math.abs(deltaY); // 가로 또는 세로 분할 여부 판단
 
-        // 만약 움직인 거리가 AreaDivideStartDistance 이상이면 분할 시작
-        if (!isAdded && (Math.abs(deltaX) > AreaDivideStartDistance || Math.abs(deltaY) > AreaDivideStartDistance)){
-          if (dir === "right" && deltaX < -AreaDivideStartDistance) {
-            console.log("right");
-            // 세로 분할
-            const newHeight = target.height / 2;
-            updatedDivs[index] = { ...target, height: newHeight }; // 기존 div 크기 조정
-            updatedDivs.push({
-              id: IDGen(),
-              width: target.width,
-              height: newHeight,
-              x: target.x,
-              y: target.y + newHeight,
-            }); // 새로운 div 추가
-            isAdded = true;
-          } else if (dir === "bottom" && deltaY < -AreaDivideStartDistance) {
-            console.log("bottom");
-            // 가로 분할
-            const newWidth = target.width / 2;
-            updatedDivs[index] = { ...target, width: newWidth }; // 기존 div 크기 조정
-            updatedDivs.push({
-              id: IDGen(),
-              width: newWidth,
-              height: target.height,
-              x: target.x + newWidth,
-              y: target.y,
-            }); // 새로운 div 추가
-            isAdded = true;
+      if (isHorizontalSplit) {
+        // 가로로 분할
+        setAreas((prev) => {
+          const newAreas = [...prev];
+          const targetIndex = newAreas.findIndex((area) => area.id === resizeTarget);
+          if (targetIndex === -1) return newAreas;
+
+          const splitWidth = targetArea.width / 2; // 기존 영역 너비의 절반 계산
+          newAreas[targetIndex] = {
+            ...targetArea,
+            width: splitWidth, // 기존 영역 크기 업데이트
+          };
+          newAreas.push({
+            id: IDGen(),
+            x: targetArea.x + splitWidth, // 새로운 영역 시작 위치 설정
+            y: targetArea.y,
+            width: splitWidth,
+            height: targetArea.height,
+          });
+          return newAreas;
+        });
+      } else {
+        // 세로로 분할
+        setAreas((prev) => {
+          const newAreas = [...prev];
+          const targetIndex = newAreas.findIndex((area) => area.id === resizeTarget);
+          if (targetIndex === -1) return newAreas;
+
+          const splitHeight = targetArea.height / 2; // 기존 영역 높이의 절반 계산
+          newAreas[targetIndex] = {
+            ...targetArea,
+            height: splitHeight, // 기존 영역 크기 업데이트
+          };
+          newAreas.push({
+            id: IDGen(),
+            x: targetArea.x,
+            y: targetArea.y + splitHeight, // 새로운 영역 시작 위치 설정
+            width: targetArea.width,
+            height: splitHeight,
+          });
+          return newAreas;
+        });
+      }
+    } else {
+      // 크기 조정 중인 경우
+      setAreas((prev) =>
+        prev.map((area) => {
+          if (area.id === resizeTarget) {
+            return {
+              ...area,
+              width: Math.max(10, targetArea.width + deltaX), // 최소 너비 제한
+              height: Math.max(10, targetArea.height + deltaY), // 최소 높이 제한
+            };
           }
-        }
-        console.log("updatedDivs", updatedDivs, dir);
-        return updatedDivs; // 업데이트된 div 상태 반환
-      });
+          return area;
+        })
+      );
+    }
+  };
 
-      // 이벤트 제거
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
+  // 마우스 업 이벤트 핸들러 (크기 조정 또는 분할 종료)
+  const handleMouseUp = () => {
+    setResizeTarget(null); // 크기 조정 대상 해제
+    setIsDividing(false); // 분할 상태 해제
+    setDragStart(null); // 드래그 시작 위치 초기화
+    document.removeEventListener("mousemove", handleMouseMove); // 이벤트 제거
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
 
-    // 드래그 종료 시 호출되는 함수
-    const onMouseUp = () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    };
-
-    // 마우스 이동 및 종료 이벤트 등록
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
+  // 모서리에 마우스를 올렸을 때 커서 모양 변경
+  const handleEdgeHover = (
+    e: React.MouseEvent<HTMLDivElement>,
+    direction: "left" | "right" | "top" | "bottom"
+  ) => {
+    if (e.ctrlKey) {
+      const cursor = {
+        left: "ew-resize", // 좌우 크기 조정 커서
+        right: "ew-resize",
+        top: "ns-resize", // 상하 크기 조정 커서
+        bottom: "ns-resize",
+      };
+      e.currentTarget.style.cursor = cursor[direction];
+    }
   };
 
   return (
@@ -119,54 +149,42 @@ const AreaDivider: React.FC = () => {
         position: "relative",
         width: "100%",
         height: "100vh",
-        border: "1px solid black", // 컨테이너 테두리
+        overflow: "hidden",
       }}
     >
-      {/* 각 div 렌더링 */}
-      {areas.map((div) => (
+      {areas.map((area) => (
         <div
-          key={div.id}
+          key={area.id}
+          className="area"
           style={{
-            position: "absolute", // 절대 위치 지정
-            width: div.width, // div 너비
-            height: div.height, // div 높이
-            top: div.y, // div y 좌표
-            left: div.x, // div x 좌표
-            border: "1px solid gray", // div 테두리
+            position: "absolute",
+            left: `${area.x}%`,
+            top: `${area.y}%`,
+            width: `${area.width}%`,
+            height: `${area.height}%`,
+            border: "1px solid black",
           }}
         >
-          {/* 모서리 부분 (드래그 가능한 영역) */}
-          <div
-            className="edge-right"
-            style={{
-              position: "absolute",
-              width: "5px",
-              height: "100%",
-              backgroundColor: "blue",
-              bottom: 0,
-              right: 0,
-              cursor: "col-resize",
-            }}
-            onMouseDown={(e) => handleMouseDown(e, div.id, "right")} // 드래그 시작 이벤트
-          ></div>
-          {/* 모서리 부분 (드래그 가능한 영역) */}
-          <div
-            className="edge-bottom"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "5px",
-              backgroundColor: "cyan",
-              bottom: 0,
-              right: 0,
-              cursor: "row-resize",
-            }}
-            onMouseDown={(e) => handleMouseDown(e, div.id, "bottom")} // 드래그 시작 이벤트
-          ></div>
+          {/* 크기 조정을 위한 모서리 히트박스 */}
+          {(["left", "right", "top", "bottom"] as const).map((direction) => (
+            <div
+              key={direction}
+              style={{
+                position: "absolute",
+                [direction]: 0,
+                width: direction === "left" || direction === "right" ? "10px" : "100%",
+                height: direction === "top" || direction === "bottom" ? "10px" : "100%",
+                cursor: "pointer",
+                background: "transparent",
+              }}
+              onMouseDown={(e) => handleMouseDown(e, area.id, direction)} // 마우스 다운 시 크기 조정 또는 분할 시작
+              onMouseOver={(e) => handleEdgeHover(e, direction)} // 커서 모양 변경
+            ></div>
+          ))}
         </div>
       ))}
     </div>
   );
 };
 
-export default AreaDivider;
+export default WorkspaceDivider;
