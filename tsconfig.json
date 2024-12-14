@@ -4,10 +4,12 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-  // "compilerOptions": {
-  //   "strict": true,
-  //   "jsx": "react-jsx",
-  //   "moduleResolution": "node"
-  // }
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
 }
 

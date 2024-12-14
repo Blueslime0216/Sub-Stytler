@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "incremental": true, //다음 에러 때문에 추가 (Option 'tsBuildInfoFile' cannot be specified without specifying option 'incremental' or option 'composite'.ts)
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "target": "ES2022",
     "lib": ["ES2023"],
@@ -16,9 +17,9 @@
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    // "noUncheckedSideEffectImports": true
   },
   "include": ["vite.config.ts"]
 }

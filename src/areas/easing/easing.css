@@ -1,0 +1,83 @@
+.area_easing {
+    position: relative;
+
+    width: 500px;
+    height: 700px;
+
+    background-color: hsl(0, 0%, 10%);
+    
+    overflow: hidden;
+}
+
+.canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 500px;
+    height: 500px;
+
+    border: 1px red solid;
+}
+
+.point {
+    position: absolute;
+
+    width: 15px;
+    height: 15px;
+
+    background-color: hsl(0, 0%, 90%);
+
+    border-radius: 50%;
+    
+    transform: translate(-50%, -50%);
+}
+.point.start {
+    left: 0px;
+    top: 500px;
+}
+.point.end {
+    left: 500px;
+    top: 0px;
+}
+
+.handle {
+    position: absolute;
+
+    width: 15px;
+    height: 15px;
+
+    border-radius: 50%;
+
+    cursor: grab;
+    transform: translate(-50%, -50%);
+
+    z-index: 10;
+}
+.handle.start {
+    background-color: hsl(30, 100%, 50%);
+}
+.handle.end {
+    background-color: hsl(60, 100%, 50%);
+}
+
+.output {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    
+    width: 100%;
+    height: 200px;
+
+    padding: 10px;
+
+    font-size: 14px;
+    color: hsl(0, 0%, 90%);
+
+    background-color: hsl(0, 0%, 20%);
+
+    border: none;
+
+    resize: none;
+    box-sizing: border-box;
+}

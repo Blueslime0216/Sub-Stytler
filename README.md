@@ -1,50 +1,28 @@
-# React + TypeScript + Vite
+## 소개
+Project.Sub-Stytler(가칭)는 유튜브 자막(.ytt)를 쉽게 제작할 수 있는 프로그램입니다.  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## 기능
+- [ ] **자막 제작** : .ytt 자막을 제작할 수 있는 기본적인 기능들
+- [ ] **자막 스타일** : 글자색, 글자 크기, 그림자 추가 및 색상 변경 등
+- [ ] **위치 애니메이션** : 자막 위치를 자유롭게 정할 수 있는 기능
+- [ ] **이징** : 애니메이션에 이징을 넣을 수 있는 기능
+- [ ] **번역** : 생성한 자막을 자동으로 번역할 수 있는 기능
+- [ ] **트래킹** : 자막이 영상의 특정 영역을 따라다니는 기능
+- [ ] **다국어 지원 인터페이스** : 한국어, 영어, 일본어, 중국어 등의 언어를 지원할 예정입니다.
+- [ ] **PC/Web 버전** : 로컬 PC에 설치할 수도 있고, 웹에서 바로 사용할 수도 있게 제작할 예정입니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 개발일지
+**[ 000 ]** : 프로젝트 셋업, 아이디어 구상 - *( 11월 초 ~ 12월 초 )*
+  - Aegisub을 사용해서 .ytt 자막을 만드는 방법을 알게 됨
+  - 기존의 워크플로우가 상당히 불편하다고 느껴 .ytt 자막 제작에 특화된 사이트를 제작하기로 마음먹음
+  - 구현할 기능들 생각하며 머릿속에서 구상하는 중
+  - 리액트 입문, 다양한 모듈을 설치한 프로젝트 생성
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+**[ 001 ]** : 이징 프리셋 Area 제작 시작 - *( 12월 14일 )*
+- *11:30 ~ 3:30 (4시간)*
+  - 이징 프리셋을 만드는 Area를 제작중
+  - 일단 점 2개로 배지어 그래프를 표현하는 것 까지 작업
+  - 이징 프리셋 타입을 미리 선언해둠
+- *3:55 ~ 4:30 (45분)*
+  - 마크다운 문법으로 README 꾸미기
