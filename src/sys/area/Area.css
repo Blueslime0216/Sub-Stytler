@@ -1,0 +1,50 @@
+/* Area 기본 스타일 */
+.area {
+  position: absolute;
+  border: 1px solid black; /* 디버깅용 */
+  background-color: lightgray;
+  overflow: hidden;
+}
+
+/* edge 공통 스타일 */
+.edge {
+  position: absolute;
+  background-color: red; /* 디버깅용 */
+  z-index: 10;
+}
+
+/* 상단 컨트롤러 */
+.edge.top {
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* height: 20px; */
+  cursor: ns-resize;
+}
+
+/* 우측 컨트롤러 */
+.edge.right {
+  top: 0;
+  right: 0;
+  /* width: 20px; */
+  height: 100%;
+  cursor: ew-resize;
+}
+
+/* 하단 컨트롤러 */
+.edge.bottom {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  /* height: 20px; */
+  cursor: ns-resize;
+}
+
+/* 좌측 컨트롤러 */
+.edge.left {
+  top: 0;
+  left: 0;
+  /* width: 20px; */
+  height: 100%;
+  cursor: ew-resize;
+}

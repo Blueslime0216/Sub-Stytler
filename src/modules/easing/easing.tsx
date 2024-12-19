@@ -169,7 +169,7 @@ function easing(x) {
     const t = findTForX(x);
     return calculateBezier(t, 0, controlPoint1Y, controlPoint2Y, 1);
 }`;
-    
+
     return (
         <div className="area area_easing" ref={areaRef}>
             {/* Start Handle */}
