@@ -4,4 +4,10 @@
 
 
 // Area의 ID 타입
-type TId = string;
+type TId = {
+    type:string|null;
+    id:string|null;
+};
+
+// 마우스 입력 종류
+type TMouseKeys = "left"|"wheel"|"right";

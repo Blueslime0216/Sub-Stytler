@@ -32,12 +32,14 @@ class Size implements TSize {
     }
 }
 // 마우스 클릭된 키들 타입
-type TMouseKeys = "left"|"wheel"|"right";
 type IMouseKeys_boolean = {
     [key in TMouseKeys]: boolean;
 };
 type IMouseKeys_position = {
     [key in TMouseKeys]:  Position;
+};
+type IMouseKeys_TId = {
+    [key in TMouseKeys]: TId;
 };
 type IWheelDelta = {
     x: number;  // X 방향 거리
@@ -50,23 +52,27 @@ type IMouseDraggedSize = {
 class Mouse {
     // 마우스 위치 관련
     position: TPosition = new Position(null, null); // 마우스 위치 (px)
-    // position_offset: TPosition = new Position(null, null); // 마우스 모듈 내에서의 상대 위치 (px)
+    position_offset: TPosition = new Position(null, null); // 마우스 모듈 내에서의 상대 위치 (px)
 
     // 마우스 클릭 관련
     // 각 마우스 누른 여부 (클릭이건 드래그건 암튼 눌려졌는가)
-    isDown: IMouseKeys_boolean = { left: false, wheel: false, right: false };
+    isDown:IMouseKeys_boolean = { left: false, wheel: false, right: false };
     // 각 마우스 누르기 시작 지점
-    downStartPosition: IMouseKeys_position = { left: new Position(null, null), wheel: new Position(null, null), right: new Position(null, null) };
+    downStartPosition:IMouseKeys_position = { left: new Position(null, null), wheel: new Position(null, null), right: new Position(null, null) };
     // 각 마우스 클릭 상태 여부 (드래그하지 않고 바로 떼었는가)
-    isClick: IMouseKeys_boolean = { left: false, wheel: false, right: false };
+    isClick:IMouseKeys_boolean = { left: false, wheel: false, right: false };
     // 각 마우스 드래그 시작 상태 여부
-    isDragFirst: IMouseKeys_boolean = { left: false, wheel: false, right: false };
+    isDragFirst:IMouseKeys_boolean = { left: false, wheel: false, right: false };
     // 각 마우스 드래그 상태 여부
-    isDragging: IMouseKeys_boolean = { left: false, wheel: false, right: false };
+    isDragging:IMouseKeys_boolean = { left: false, wheel: false, right: false };
     // 마우스가 드래그 된 거리
-    draggedSize: IMouseDraggedSize = { left: new Size(null, null), wheel: new Size(null, null), right: new Size(null, null) };
+    draggedSize:IMouseDraggedSize = { left: new Size(null, null), wheel: new Size(null, null), right: new Size(null, null) };
     // 휠 방향
-    wheelDelta: IWheelDelta = { x: 0, y: 0 };
+    wheelDelta:IWheelDelta = { x: 0, y: 0 };
+    // 클릭된 요소
+    downTarget:IMouseKeys_TId = { left: { type: null, id: null }, wheel: { type: null, id: null }, right: { type: null, id: null } };
+    // 지금 마우스 아래에 있는 요소
+    moveTarget:TId = { type: null, id: null };
 
 
     // 마우스를 누르면
@@ -74,20 +80,35 @@ class Mouse {
         // 마우스 클릭 시작 위치 저장
         const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
 
-        $mouse.isClick[button] = false;  // 마우스 버튼 클릭 상태 초기화
-        $mouse.downStartPosition[button] = { x: e.clientX, y: e.clientY }; // 마우스 클릭 시작 위치 저장
-        $mouse.isDown[button] = true; // 눌렸다고 표시하기
-        // $mouse.isDragFirst[button] = true; // 드래그 시작 상태로 표시하기
-        $mouse.isDragging[button] = false;  // 마우스 왼쪽 버튼 드래그 상태 초기화
+        this.isClick[button] = false;  // 마우스 버튼 클릭 상태 초기화
+        this.downStartPosition[button] = { x: e.clientX, y: e.clientY }; // 마우스 클릭 시작 위치 저장
+        this.isDown[button] = true; // 눌렸다고 표시하기
+        // this.isDragFirst[button] = true; // 드래그 시작 상태로 표시하기
+        this.isDragging[button] = false;  // 마우스 왼쪽 버튼 드래그 상태 초기화
 
-        console.log($mouse.downStartPosition[button]);
-        // controller.mousedown(e); // 컨트롤러 실행
+        // 클릭된 요소 저장
+        const target = e.target as HTMLElement
+        const dataId = target.getAttribute("data-id");
+        const dataType = target.getAttribute("data-type");
+        this.downTarget[button] = { type: dataType, id: dataId };
+
+        controller.run("mousedown", e); // 컨트롤러 실행
     };
 
     mousemove(e: MouseEvent) {
         // 위치 저장
-        $mouse.position = new Position(e.clientX, e.clientY);
-        // $mouse.position_offset = new Position(e.offsetX, e.offsetY);
+        this.position = new Position(e.clientX, e.clientY);
+        this.position_offset = new Position(e.offsetX, e.offsetY);
+
+        // 아래 있는 요소 저장
+        const target = e.target as HTMLElement
+        const dataId = target.getAttribute("data-id");
+        const dataType = target.getAttribute("data-type");
+        this.moveTarget = { type: dataType, id: dataId };
+        // console.log(`mousedown ${dataId} : ${this.position_offset.x}, ${this.position_offset.y}`);
+
+        controller.run("mousemove", e); // 컨트롤러 실행
+        
 
         // // 마우스가 눌려있으면 드래그 중으로 표시
         // if ($mouse.isDown.left) { // 마우스 왼쪽 버튼이 눌려있으면
@@ -108,8 +129,6 @@ class Mouse {
         //     // 드래그 거리 저장
         //     $mouse.draggedSize.right = new Size(e.clientX - $mouse.downStartPosition.right.x, e.clientY - $mouse.downStartPosition.right.y);
         // }
-
-        // controller.mousemove(e); // 컨트롤러 실행
     }
 
     // 클릭 이벤트 실행하기
@@ -154,7 +173,8 @@ class Mouse {
 
     // 마우스 클릭 해제 이벤트
     mouseup(e: MouseEvent) {
-        console.log("mouseup");
+        const log = `mouseup : ${["왼쪽", "휠", "오른쪽"][e.button]}`;
+        console.log(log);
         const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
 
         $mouse.isClick[button] = false;  // 마우스 버튼 클릭 상태 초기화

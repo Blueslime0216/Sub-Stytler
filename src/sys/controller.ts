@@ -17,9 +17,9 @@ interface IController {
     holding: keydownSet[];
     keyup: keydownSet_singleKey[];
 
-    // mousedown: Function[];
-    // mousemove: Function[];
-    // mouseup: Function[];
+    mousedown: mouseSet[];
+    mousemove: mouseSet[];
+    mouseup: mouseSet[];
 
     resize: Function[];
 };
@@ -31,8 +31,14 @@ interface keydownSet_singleKey {
     key: KeyboardEvent['code'];
     func: Function;
 };
+interface mouseSet {
+    mouse: TMouseKeys;
+    id: string;
+    func: Function;
+};
 type eventTypes =   'load'
                     |'keydown'|'holdStart'|'holding'|'keyup'
+                    |'mousedown'|'mousemove'|'mouseup'
                     |'resize';
 
 type IEvents = {
@@ -104,13 +110,14 @@ const controller:IController = {
     holding: [],    // 특정 키들을 꾹 누른 상태일 때 실행될 함수들이 담긴 배열. 형식 : ({ key:[ 'ctrl', 's' ], func:함수(e) })
     keyup: [],      // 특정 키를 뗐을 때 실행될 함수들이 담긴 배열. 형식 : ({ key:'a', func:함수(e) })
 
-    // mousedown: [],  // 마우스를 눌렀을 때 실행될 함수들이 담긴 배열. 형식 : (함수)
-    // mousemove: [],  // 마우스가 움직일 때 실행될 함수들이 담긴 배열. 형식 : (함수)
-    // mouseup: [],    // 마우스를 뗐을 때 실행될 함수들이 담긴 배열. 형식 : (함수)
+    mousedown: [],  // 마우스를 눌렀을 때 실행될 함수들이 담긴 배열. 형식 : ({ mouse:'left', func:함수(e) })
+    mousemove: [],  // 마우스가 움직일 때 실행될 함수들이 담긴 배열. 형식 : (함수)
+    mouseup: [],    // 마우스를 뗐을 때 실행될 함수들이 담긴 배열. 형식 : (함수)
 
     resize: [],     // 브라우저 크기가 변경될 때 실행될 함수들이 담긴 배열. 형식 : (함수)
 };
-if (false) {   // 형식 예제 
+
+if (true) {   // 형식 예제 
     controller.keydown.push({
         keys: ['KeyD'],
         func: (e:KeyboardEvent) => {
@@ -152,7 +159,7 @@ function _areKeysEqual(arr1:string[], arr2:string[]):boolean {
 }
 
 // 이벤트에 맞는 함수들 실행하는 함수
-function run(type:eventTypes, e:KeyboardEvent) {
+function run(type:eventTypes, e:KeyboardEvent|MouseEvent) {
     if (type === 'load') {
         controller.load.forEach((func) => {
             func();
@@ -171,17 +178,23 @@ function run(type:eventTypes, e:KeyboardEvent) {
         // keyup 배열에 있는 set 중에서 키가 일치하는 것을 찾아서 함수 실행
         controller.keyup.forEach((set) => {
             // 키가 일치하면 해당 함수 실행
+            // @ts-ignore
             if (set.key === e.code) {
                 set.func(e);
             };
         });
     }
-    // else if (type === 'mousedown') {
-    //     controller.mousedown.forEach((func) => {
-    //         console.log('mousedown');
-    //         func(e);
-    //     });
-    // }
+    else if (type === 'mousedown') {
+        const e_mouse = e as MouseEvent;
+        controller.mousedown.forEach((set:mouseSet) => {
+            const log = `set.id: ${set.id}, $mouse.id: ${$mouse.downTarget[set.mouse].id}, set.mouse: ${set.mouse}, e_mouse.button: ${e_mouse.button}`;
+            console.log(log);
+            if (set.id === $mouse.downTarget[set.mouse].id && set.mouse === ['left', 'middle', 'right'][e_mouse.button]) {
+                console.log('마우스 다운', set.mouse, set.id);
+                set.func(e);
+            }
+        });
+    }
     else if (type === 'resize') {
         controller.resize.forEach((func) => {
             func();

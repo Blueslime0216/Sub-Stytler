@@ -17,37 +17,6 @@ import './sys/area/AreaController.tsx'
 import $mouse from './sys/mouse.ts'
 
 
-
-window.addEventListener('contextmenu', (e) => {
-    e.preventDefault(); // 우클릭 메뉴 안 뜨게 하기
-});
-// window load되면 이벤트 리스너 추가
-window.addEventListener('load', () => {
-    controller.run('load');
-});
-
-// 키보드 이벤트 리스너
-window.addEventListener("keydown", (e) => {
-    $keyboard.keydown(e);
-});
-window.addEventListener("keyup", (e) => {
-    $keyboard.keyup(e);
-});
-
-window.addEventListener("mousedown", (e) => {
-    $mouse.mousedown(e);
-});
-window.addEventListener("mouseup", (e) => {
-    $mouse.mouseup(e);
-});
-
-// 이벤트 리스너 등록
-window.addEventListener("resize", () => {
-    controller.run('resize');
-});
-
-
-
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <App />

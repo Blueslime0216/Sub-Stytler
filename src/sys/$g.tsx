@@ -8,7 +8,7 @@ import controller from "./controller";
 
 
 // id를 생성하는 함수
-function genID():TId {
+function genID():string {
     // 랜덤 문자열 생성
     return Math.random().toString(36).substring(2, 16);
 }
@@ -18,7 +18,10 @@ const $g = {
     width: window.innerWidth,   // 브라우저 너비
     height: window.innerHeight, // 브라우저 높이
     Areas: [{                   // Area들이 담길 배열
-        id:genID(),             // Area ID
+        id:{
+            type: "area",       // Area Type (종류)
+            code: genID()       // Area ID 코드
+        },
         x:0,                    // 왼쪽 상단의 X 좌표
         y:0,                    // 왼쪽 상단의 Y 좌표
         width:10000,            // 너비 (0 ~ 10000)으로 (0.00% ~ 100.00%)로 적용된다

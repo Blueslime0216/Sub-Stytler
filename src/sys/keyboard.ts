@@ -20,7 +20,7 @@ export class Keyboard {
     isKeyHold(key:KeyboardEvent["code"]): boolean { return this._keymap_hold.indexOf(key) !== -1; }
     // index
     indexOf(key:KeyboardEvent["code"]): number { return this._keymap.indexOf(key); }
-      
+
 
     // 키보드 이벤트 리스너
     keydown(e: KeyboardEvent) {

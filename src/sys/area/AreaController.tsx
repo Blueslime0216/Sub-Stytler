@@ -20,11 +20,11 @@ export function AreaResizer() {
     });
 }
 
-function addEventListener_click(element:HTMLElement, click_callback:Function) {
-    element.addEventListener("click", (e) => {
-        click_callback(e);
-    });
-}
+// function addEventListener_click(element:HTMLElement, click_callback:Function) {
+//     element.addEventListener("click", (e) => {
+//         click_callback(e);
+//     });
+// }
 
 // edge 이벤트 리스너 등록
 function EdgeFunctionAdd() {
@@ -45,27 +45,16 @@ function EdgeFunctionAdd() {
                 console.log(target.style.width + e.clientX+"px");
             }
         });
-        // edge.addEventListener('dragstart', (e) => {
-        //     e.preventDefault(); // 기본 드래그 동작 방지
-        //     console.log("dragstart");
-        // });
-        // edge.addEventListener("drag", (e) => {
-        //     console.log("drag");
-        //     const mouseEvent = e as MouseEvent;
-        //     if (mouseEvent.clientY === 0 || mouseEvent.clientX === 0) {
-        //         return;
-        //     }
-            
-        //     // 해당 id를 가진 요소를 찾기
-        //     const id = edge.parentElement?.getAttribute("data-id")
-        //     const target = edge.parentElement as HTMLElement;
-        //     // 크기 업데이트
-        //     if (edge.classList.contains("top") || edge.classList.contains("bottom")) {
-        //         target.style.height = mouseEvent.clientY + "px";
-        //     } else {
-        //         target.style.width = mouseEvent.clientX + "px";
-        //     }
-        // });
+
+        controller.mousedown.push({
+            mouse: 'left',
+            id: edge.id,
+            func: (e:KeyboardEvent) => {
+                e.preventDefault();
+                console.log('D 떼기');
+            }
+        });
     });
 };
+
 controller.load.push(EdgeFunctionAdd);
