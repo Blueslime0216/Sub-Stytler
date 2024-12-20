@@ -14,7 +14,6 @@ import App from './App.tsx'
 // 한번 실행해야 해서 import한 코드들
 import './sys/area/AreaController.tsx'
 // 마우스 클릭 관련으로 추가될 이벤트 리스너들
-import { EdgeFunctionAdd } from "./sys/area/AreaController";
 import $mouse from './sys/mouse.ts'
 
 
@@ -24,8 +23,7 @@ window.addEventListener('contextmenu', (e) => {
 });
 // window load되면 이벤트 리스너 추가
 window.addEventListener('load', () => {
-    console.log('로드됨');
-    EdgeFunctionAdd();
+    controller.run('load');
 });
 
 // 키보드 이벤트 리스너

@@ -50,7 +50,7 @@ type IMouseDraggedSize = {
 class Mouse {
     // 마우스 위치 관련
     position: TPosition = new Position(null, null); // 마우스 위치 (px)
-    position_offset: TPosition = new Position(null, null); // 마우스 모듈 내에서의 상대 위치 (px)
+    // position_offset: TPosition = new Position(null, null); // 마우스 모듈 내에서의 상대 위치 (px)
 
     // 마우스 클릭 관련
     // 각 마우스 누른 여부 (클릭이건 드래그건 암튼 눌려졌는가)
@@ -80,8 +80,37 @@ class Mouse {
         // $mouse.isDragFirst[button] = true; // 드래그 시작 상태로 표시하기
         $mouse.isDragging[button] = false;  // 마우스 왼쪽 버튼 드래그 상태 초기화
 
+        console.log($mouse.downStartPosition[button]);
         // controller.mousedown(e); // 컨트롤러 실행
     };
+
+    mousemove(e: MouseEvent) {
+        // 위치 저장
+        $mouse.position = new Position(e.clientX, e.clientY);
+        // $mouse.position_offset = new Position(e.offsetX, e.offsetY);
+
+        // // 마우스가 눌려있으면 드래그 중으로 표시
+        // if ($mouse.isDown.left) { // 마우스 왼쪽 버튼이 눌려있으면
+        //     // 왼쪽 버튼 드래그 중으로 표시
+        //     $mouse.isDragging.left = true;
+        //     // 드래그 거리 저장
+        //     $mouse.draggedSize.left = new Size(e.clientX - $mouse.downStartPosition.left.x, e.clientY - $mouse.downStartPosition.left.y);
+        // }
+        // if ($mouse.isDown.wheel) { // 마우스 휠 버튼이 눌려있으면
+        //     // 휠 버튼 드래그 중으로 표시
+        //     $mouse.isDragging.wheel = true;
+        //     // 드래그 거리 저장
+        //     $mouse.draggedSize.wheel = new Size(e.clientX - $mouse.downStartPosition.wheel.x, e.clientY - $mouse.downStartPosition.wheel.y);
+        // }
+        // if ($mouse.isDown.right) { // 마우스 오른쪽 버튼이 눌려있으면
+        //     // 오른쪽 버튼 드래그 중으로 표시
+        //     $mouse.isDragging.right = true;
+        //     // 드래그 거리 저장
+        //     $mouse.draggedSize.right = new Size(e.clientX - $mouse.downStartPosition.right.x, e.clientY - $mouse.downStartPosition.right.y);
+        // }
+
+        // controller.mousemove(e); // 컨트롤러 실행
+    }
 
     // 클릭 이벤트 실행하기
     mouseclick(e: MouseEvent) {
@@ -144,36 +173,6 @@ class Mouse {
 
     //     controller.wheel(e); // 컨트롤러 실행
     // }
-
-    // 특정 요소에 클릭 이벤트 추가하기
-    click(element:HTMLElement, click_callback:Function) {
-        element.addEventListener("click", (e) => {
-            click_callback(e);
-        });
-    };
-    drag(element:HTMLElement, drag_callback:Function) {
-        // 드래그 끝나면 클래스 제거
-        element.addEventListener("mouseup", (e) => {
-            console.log("dragend");
-            element.classList.remove("dragging");
-        });
-        element.addEventListener("dragstart", (e) => {
-            e.preventDefault(); // 기본 드래그 동작 방지
-            console.log("dragstart");
-
-            element.classList.add("dragging");
-            // requestAnimationFrame 사용
-            function ref(e:MouseEvent) {
-                drag_callback(e);
-                console.log($mouse.isDown);
-
-                if ($mouse.isDown.left) {
-                    requestAnimationFrame(() => ref(e));
-                }
-            }
-            ref(e);
-        });
-    }
 
     // edge.addEventListener('dragstart', (e) => {
     //     e.preventDefault(); // 기본 드래그 동작 방지

@@ -2,6 +2,7 @@
 // Area 크기를 브라우저 크기에 맞춰 업데이트 하는 코드
 // ====================================================================================================
 import $g from "../$g";
+import controller, { addEvent } from "../controller";
 import $keyboard from "../keyboard";
 import $mouse from "../mouse";
 import Area from "./Area";
@@ -25,17 +26,15 @@ function addEventListener_click(element:HTMLElement, click_callback:Function) {
     });
 }
 
-// edge가 클릭되면 콘솔에 출력하는 코드
-export function EdgeFunctionAdd() {
+// edge 이벤트 리스너 등록
+function EdgeFunctionAdd() {
     // 모든 edge를 찾아서 이벤트 리스너 등록
     document.querySelectorAll(".edge").forEach((edge) => {
-        // 클릭 예제
-        // $mouse.click(edge as HTMLElement, (e:MouseEvent) => {
-        //     console.log($keyboard.isKeyDown("AltLeft"));
-        //     console.log(e);
-        // });
-        // 크기 조절
-        $mouse.drag(edge as HTMLElement, (e:MouseEvent) => {
+        addEvent.click(edge, (e:MouseEvent) => { // edge as HTMLElement 왜 안 적어도 에러 안 뜨지?
+            console.log("Edge 클릭됨", $keyboard.isKeyDown("AltLeft"), e);
+        });
+
+        addEvent.dragging(edge, (e:MouseEvent) => {
             // 해당 id를 가진 요소를 찾기
             const target = edge.parentElement as HTMLElement;
             // 크기 업데이트
@@ -43,6 +42,7 @@ export function EdgeFunctionAdd() {
                 target.style.height = e.clientY+"px";
             } else {
                 target.style.width = e.clientX+"px";
+                console.log(target.style.width + e.clientX+"px");
             }
         });
         // edge.addEventListener('dragstart', (e) => {
@@ -67,4 +67,5 @@ export function EdgeFunctionAdd() {
         //     }
         // });
     });
-}
+};
+controller.load.push(EdgeFunctionAdd);

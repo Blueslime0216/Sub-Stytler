@@ -9,6 +9,8 @@ import $mouse from "./mouse";
 // 타입들 선언
 interface IController {
     run: Function;
+
+    load: Function[];
     
     keydown: keydownSet[];
     holdStart: keydownSet[];
@@ -20,22 +22,82 @@ interface IController {
     // mouseup: Function[];
 
     resize: Function[];
-}
+};
 interface keydownSet {
-    keys: Array<KeyboardEvent["code"]>;
+    keys: Array<KeyboardEvent['code']>;
     func: Function;
-}
+};
 interface keydownSet_singleKey {
-    key: KeyboardEvent["code"];
+    key: KeyboardEvent['code'];
     func: Function;
-}
-type eventTypes =  'keydown'|"holdStart"|"holding"|"keyup"|'resize'
-                  |'mousedown'|'mousemove'|'mouseup';
+};
+type eventTypes =   'load'
+                    |'keydown'|'holdStart'|'holding'|'keyup'
+                    |'resize';
+
+type IEvents = {
+    click: Function;
+    dragging: Function;
+    // dragstart: Function;
+    // dragend: Function;
+    // dblclick: Function;
+};
 
 
+// 요소 이벤트 추가하는 함수 묶음
+export const addEvent:IEvents = {
+    click(element:HTMLElement, func:Function) {
+        element.addEventListener("click", (e) => {
+            func(e);
+        });
+    },
+    dragging(element:HTMLElement, func:Function) {
+        element.addEventListener("dragstart", (e) => {
+            // 클래스 추가
+            element.classList.add("dragging");
 
+            const ref = (event: DragEvent) => {
+                func(event);
+
+                // 드래그 중이면 계속 실행
+                if (element.classList.contains("dragging")){
+                    requestAnimationFrame(() => ref(e as DragEvent));
+                }
+            };
+            // (할일) 문제 : e요소는 드래그 시작 위치를 기억해서 업데이트가 안됌
+            // 해결 : $mouse의 드래그 시작 위치를 저장하고, 매 반복마다 새로 받아와서 그 차이만큼 이동하도록 수정
+
+            ref(e as DragEvent);
+        });
+        // ref 중단
+        window.addEventListener("mouseup", (e) => {
+            if (element.classList.contains("dragging")) {
+                console.log("dragend");
+                element.classList.remove("dragging");
+            }
+        });
+    },
+    // dragstart(element:HTMLElement, func:Function) {
+    //     element.addEventListener("dragstart", (e) => {
+    //         func(e);
+    //     });
+    // },
+    // dragend(element:HTMLElement, func:Function) {
+    //     element.addEventListener("dragend", (e) => {
+    //         func(e);
+    //     });
+    // },
+    // dblclick(element:HTMLElement, func:Function) {
+    //     element.addEventListener("dblclick", (e) => {
+    //         func(e);
+    //     });
+    // }
+};
+// 키 입력 관련
 const controller:IController = {
     run,            // 이벤트에 맞는 함수들 실행하는 함수
+
+    load: [],    // 처음 접속할 때 실행될 함수들이 담긴 배열. 형식 : 함수들이 담긴 배열
 
     keydown: [],    // 특정 키들을 눌렸을 때 실행될 함수들이 담긴 배열. 형식 : ({ key:[ 'ctrl', 's' ], func:함수(e) })
     holdStart: [],  // 특정 키들을 꾹 누르기 시작했을 때 실행될 함수들이 담긴 배열. 형식 : ({ key:[ 'ctrl', 's' ], func:함수(e) })
@@ -80,6 +142,7 @@ if (false) {   // 형식 예제
 }
 
 
+// 키 배열이 같은지 비교하는 함수
 function _areKeysEqual(arr1:string[], arr2:string[]):boolean {
     // 배열 길이가 다르면 바로 false 반환
     if (arr1.length !== arr2.length) return false;
@@ -88,8 +151,14 @@ function _areKeysEqual(arr1:string[], arr2:string[]):boolean {
     return arr1.every((value, index) => value === arr2[index]);
 }
 
+// 이벤트에 맞는 함수들 실행하는 함수
 function run(type:eventTypes, e:KeyboardEvent) {
-    if (type == 'keydown'|| type == 'holdStart' || type == 'holding') {     // ['keydown', 'holdStart', 'holding'].includes(type)을 사용하고 싶지만 타입스크립트 에러 뜸
+    if (type === 'load') {
+        controller.load.forEach((func) => {
+            func();
+        });
+    }
+    else if (type === 'keydown'|| type === 'holdStart' || type === 'holding') {     // ['keydown', 'holdStart', 'holding'].includes(type)을 사용하고 싶지만 타입스크립트 에러 뜸
         // keydown 배열에 있는 set 중에서 키가 일치하는 것을 찾아서 함수 실행
         controller[type].forEach((set) => {
             // 키가 일치하면 해당 함수 실행
@@ -98,26 +167,27 @@ function run(type:eventTypes, e:KeyboardEvent) {
             };
         });
     } 
-    else if (type == 'keyup') {
+    else if (type === 'keyup') {
         // keyup 배열에 있는 set 중에서 키가 일치하는 것을 찾아서 함수 실행
         controller.keyup.forEach((set) => {
             // 키가 일치하면 해당 함수 실행
-            if (set.key == e.code) {
+            if (set.key === e.code) {
                 set.func(e);
             };
         });
     }
-    // else if (type == 'mousedown') {
+    // else if (type === 'mousedown') {
     //     controller.mousedown.forEach((func) => {
     //         console.log('mousedown');
     //         func(e);
     //     });
     // }
-    else if (type == 'resize') {
+    else if (type === 'resize') {
         controller.resize.forEach((func) => {
             func();
         });
     }
 }
+
 
 export default controller;
