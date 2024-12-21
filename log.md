@@ -3,6 +3,7 @@
 1. 프로젝트명 : 서브-스타이틀러(Sub-Stytler)
  - 유튜브 웹 기반 자막(.ytt)을 만들 수 있는 사이트
  - Electron을 사용해 PC 전용 애플리케이션으로 빌드할 계획 있음
+ - TypeScript + React + Vite + Framer Motion 프로젝트임
 
 2. 사용할 모듈 및 프레임워크
  - TypeScript: 코드 가독성과 타입 안정성을 위해 사용

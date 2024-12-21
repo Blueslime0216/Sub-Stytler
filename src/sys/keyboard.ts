@@ -4,9 +4,9 @@
 import controller from "./controller"; // 컨트롤러 클래스를 불러옴
 
 
-
+// 키보드 입력을 전부 관리하는 클래스
 export class Keyboard {
-    // 현재 눌려있는 키를 저장하는 Set 객체 (중복된 값을 허용하지 않음)
+    // 현재 눌려있는 키를 저장하는 배열
     keymap:Array<KeyboardEvent["code"]> = [];      // 눌린 키
     keymap_hold:Array<KeyboardEvent["code"]> = []; // 꾹 눌리고 있는 키
     time:Array<number> = [];                       // 눌린 시간
@@ -34,9 +34,12 @@ export class Keyboard {
                 // holdStart 판정
                 $keyboard.keymap_hold.push(e.code);
 
+                // holdStart 실행
                 controller.run('holdStart', e);
             } else {
                 // holding 판정
+
+                // holding 실행
                 controller.run('holding', e);
             }
         }

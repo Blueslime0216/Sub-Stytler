@@ -9,7 +9,7 @@
 /* edge 공통 스타일 */
 .edge {
   position: absolute;
-  background-color: red; /* 디버깅용 */
+  background-color: rgba(255, 0, 0, 0.5);
   z-index: 10;
 }
 
