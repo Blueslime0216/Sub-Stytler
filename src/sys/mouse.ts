@@ -12,9 +12,16 @@ type IMouseKeys_boolean = {
 type IMouseKeys_position = {
     [key in TMouseKeys]:Position;
 };
+type IMouseTarget = HTMLElement|null;
 type IMouseTargets = {
-    [key in TMouseKeys]: HTMLElement|null;
+    [key in TMouseKeys]: IMouseTarget;
 };
+/**
+ * 마우스 move 함수 실행 시 해당 이벤트 실행의 원인이 move인지 drag인지 구분하기 위한 타입
+ * 
+ * *move*는 마우스 좌표가 변할 때 호출되지만, *drag*는 움직일 때와 가만히 있을 때 모두 호출된다
+ */
+type TMouseMoveType = "move"|"drag";
 
 
 class Mouse {
@@ -38,7 +45,7 @@ class Mouse {
     // 클릭된 요소
     downTarget:IMouseTargets = { left: null, wheel: null, right: null };
     // 지금 마우스 아래에 있는 요소
-    moveTarget:IMouseTargets = { left: null, wheel: null, right: null };
+    moveTarget:IMouseTarget = null;
 
 
     // 마우스를 누르면
@@ -56,12 +63,13 @@ class Mouse {
 
 
         // (디버깅) mousedown 키 표시 로그 남기기
-        if (true){
+        if (false){
             console.log(`[Mouse Down] : %c${button}%c`,
                         "color: cyan; font-weight: bold;","");
         }
-        // 
-        if (true){
+        // (디버깅) 클릭된 요소 로그 남기기
+        if (false){
+            // (할일) 클릭된 요소가 무엇인지 텍스트도 같이 적는 부분 추가하기
             console.log($mouse.downTarget[button]);
         }
     };
@@ -79,20 +87,27 @@ class Mouse {
             console.log(`[Mouse Drag Start] : %c${button}%c at (%c${$mouse.downStartPosition[button].x}%c, %c${$mouse.downStartPosition[button].y}%c)`,
                 "color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","");
         }
-
     };
 
-    // 마우스가 움직이면
-    move(e: MouseEvent) {
+    /**
+     * 마우스가 움직이면 실행되는 함수
+     * 
+     * *move*는 마우스 좌표가 변할 때 호출되지만, *drag*는 움직일 때와 가만히 있을 때 모두 호출된다
+     * @param {TMouseMoveType} type 함수 실행 시 해당 이벤트 실행의 원인이 move인지 drag인지 구분하기 위한 인자
+     */
+    move(e: MouseEvent, type:TMouseMoveType) {
+        // (디버깅) 이벤트 실행 원인 로그 남기기
+        if (false){
+            console.log(`%c${type}%c로 인해 %cmousemove%c 이벤트 발생`,
+                "color: cyan; font-weight: bold;","","color: yellow; font-weight: bold;","");
+        }
+
         // 위치 저장
         $mouse.position = new Position(e.clientX, e.clientY);
         $mouse.position_offset = new Position(e.offsetX, e.offsetY);
 
-        // 아래 있는 요소 저장
-        const target = e.target as HTMLElement
-        const dataId = target.getAttribute("data-id");
-        const dataType = target.getAttribute("data-type");
-        // $mouse.moveTarget = { type: dataType, id: dataId };
+        // 지금 마우스 아래 있는 요소 저장
+        $mouse.moveTarget = e.target as HTMLElement;
 
         // 마우스가 눌려있으면 드래그 중으로 표시
         if ($mouse.isDown.left) { // 마우스 왼쪽 버튼이 눌려있으면

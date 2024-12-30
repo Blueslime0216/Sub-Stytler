@@ -38,6 +38,7 @@ interface mouseSet {
 type eventTypes =   'load'
                     |'keydown'|'holdStart'|'holding'|'keyup'
                     |'mousedown'|'mousemove'|'mouseup'
+                    // |'tooltip'
                     |'resize';
 
 type IEvents = {
