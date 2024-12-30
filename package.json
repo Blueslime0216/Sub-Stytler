@@ -10,9 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "lit": "^3.2.1"
+    "lit": "^3.2.1",
+    "vite-plugin-lit-css": "^2.0.0"
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/web": "^0.0.188",
     "@vitejs/plugin-legacy": "^6.0.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "esbuild": "^0.24.2",
