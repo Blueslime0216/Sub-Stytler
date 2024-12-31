@@ -24,6 +24,11 @@ class Area extends LitElement {
     @property({ type: String }) moduleType:string = 'none';
 
     static styles = css`
+        /* :host {
+            display: block;
+            position: relative;
+        } */
+            
         .area {
             display: block;
             padding: 16px;

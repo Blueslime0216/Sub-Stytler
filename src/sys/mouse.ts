@@ -61,7 +61,6 @@ class Mouse {
         // 클릭된 요소 저장
         $mouse.downTarget[button] = e.target as HTMLElement;
 
-
         // (디버깅) mousedown 키 표시 로그 남기기
         if (false){
             console.log(`[Mouse Down] : %c${button}%c`,
@@ -71,21 +70,6 @@ class Mouse {
         if (false){
             // (할일) 클릭된 요소가 무엇인지 텍스트도 같이 적는 부분 추가하기
             console.log($mouse.downTarget[button]);
-        }
-    };
-
-    // 드래그 시작
-    dragstart(e: MouseEvent) {
-        // 마우스 클릭 시작 위치 저장
-        const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
-
-        $mouse.isDragging[button] = true;  // 드래그 중으로 표시
-
-
-        // (디버깅) dragstart 키 표시 로그 남기기
-        if (true){
-            console.log(`[Mouse Drag Start] : %c${button}%c at (%c${$mouse.downStartPosition[button].x}%c, %c${$mouse.downStartPosition[button].y}%c)`,
-                "color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","");
         }
     };
 
@@ -109,6 +93,16 @@ class Mouse {
         // 지금 마우스 아래 있는 요소 저장
         $mouse.moveTarget = e.target as HTMLElement;
 
+        
+        // (디버깅) dragstart 키 표시 로그 남기기
+        if (true){
+            if (($mouse.isDown.left && !$mouse.isDragging.left) || ($mouse.isDown.wheel && !$mouse.isDragging.wheel) || ($mouse.isDown.right && !$mouse.isDragging.right)) {
+                const button:TMouseKeys = $mouse.isDown.left ? "left" : $mouse.isDown.wheel ? "wheel" : "right";
+
+                console.log(`[Mouse Drag Start] : %c${button}%c at (%c${$mouse.downStartPosition[button].x}%c, %c${$mouse.downStartPosition[button].y}%c)`,
+                    "color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","");
+            }
+        }
         // 마우스가 눌려있으면 드래그 중으로 표시
         if ($mouse.isDown.left) { // 마우스 왼쪽 버튼이 눌려있으면
             // 왼쪽 버튼 드래그 중으로 표시
