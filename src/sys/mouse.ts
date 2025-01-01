@@ -1,8 +1,11 @@
 // ====================================================================================================
-// 마우스 입력에 관한 정보가 저장된 클래스가 선언된 파일
+// 마우스 입력에 대한 정보가 담겨있는 클래스가 선언된 파일
 // 이 클래스 안에 마우스 입력에 관한 정보가 저장되고, 불러올 수 있다
+// 마우스 입력을 받으면 적절하게 처리해서 알맞은 컨트롤러를 실행시킨다
 // ====================================================================================================
+import $g from "../utils/$g";
 import { Position, Size } from "../utils/utils";
+import controller from "./controller";
 
 
 // 마우스 클릭된 키들 타입
@@ -24,10 +27,14 @@ type IMouseTargets = {
 type TMouseMoveType = "move"|"drag";
 
 
+
 class Mouse {
     // 마우스 위치 관련
     position:TPosition = new Position(null, null); // 마우스 위치 (px)
     position_offset:TPosition = new Position(null, null); // 마우스 모듈 내에서의 상대 위치 (px)
+    
+    // 마우스 연속 클릭 횟수를 저장할 변수
+    clickCount:number = 0;
 
     // 마우스 클릭 관련
     // 각 마우스 누른 여부 (클릭이건 드래그건 암튼 눌려졌는가)
@@ -57,9 +64,95 @@ class Mouse {
         $mouse.downStartPosition[button] = { x: e.clientX, y: e.clientY }; // 마우스 클릭 시작 위치 저장
         $mouse.isDown[button] = true; // 눌렸다고 표시하기
         $mouse.isDragging[button] = false;  // 마우스 버튼 드래그 상태 초기화
+        // (디버깅) 각 키 표시 상태 로그 남기기
+        if (false){
+            const value = 'isDown';
+            const color = { true: "lightgreen", false: "gray" };
+            console.log(`[$mouse.${value}] : %c${$mouse[value].left}%c, %c${$mouse[value].wheel}%c, %c${$mouse[value].right}`,
+                        `color: ${$mouse[value].left ? color.true : color.false}; font-weight: bold;`,"",
+                        `color: ${$mouse[value].wheel ? color.true : color.false}; font-weight: bold;`,"",
+                        `color: ${$mouse[value].right ? color.true : color.false}; font-weight: bold;`);
+        }
 
         // 클릭된 요소 저장
         $mouse.downTarget[button] = e.target as HTMLElement;
+
+        // mousedown 이벤트 실행
+        controller.run("mousedown", e);
+
+        // click, dblclick, drag 등 판단하는 ref
+        const start_ref = (button:TMouseKeys) => {
+            // ref에서 사용할 인자 선언하기
+            const startTime = Date.now();
+            const pressed_button:TMouseKeys = button;
+
+            const ref = () => {
+                // 마우스 클릭/드래그 등 여부 판단 대기 중 로그
+                if (false){
+                    console.log(pressed_button + ` %cWaiting Mouse Input...`,
+                                "color: orange;");
+                };
+                
+                // 만약 마우스를 움직인다면 drag로 판단
+                if ($mouse.isDragging[pressed_button]) {
+                    // 마우스 clickend 가상 이벤트 실행
+                    $mouse.clickend(e);
+                    // drag 이벤트 실행
+                    controller.run("mousedrag", e);
+
+                    return;
+                };
+                // 만약 마우스를 떼면 click으로 판단
+                if (!$mouse.isDown[pressed_button]) {
+                    // 마우스 click 가상 이벤트 실행
+                    $mouse.click(e);
+
+                    return;
+                };
+                // 설정된 시간이 지나면 holding으로 판단
+                // if (Date.now() - startTime > $g.mouseHoldingStartTime) {
+                //     // 마우스 holding 이벤트 실행
+                //     controller.run("mouseholding", e);
+
+                //     return;
+                // };
+
+                requestAnimationFrame(ref);
+            }
+            requestAnimationFrame(ref);
+        }
+        start_ref(button);
+
+        // 클릭을 멈춘 경우를 감지하기 위한 ref
+        const start_ref2 = (id:string) => {
+            // ref에서 사용할 인자 선언하기
+            const startTime = Date.now();
+
+            const ref2 = () => {
+                // 마우스 클릭/드래그 등 여부 판단 대기 중 로그
+                if (true){
+                    console.log(`%cWaiting for Mouse Click End...`,
+                                "color: orange;");
+                };
+
+                // 만약 마우스 클릭이 실행되면 return
+                if ($mouse.isDown.left || $mouse.isDown.wheel || $mouse.isDown.right) {
+                    return;
+                };
+
+                // 설정된 시간이 지나면 holding으로 판단
+                if (Date.now() - startTime > $g.mouseHoldingStartTime) {
+                    // 마우스 holding 이벤트 실행
+                    controller.run("mouseholding", e);
+
+                    return;
+                };
+
+                requestAnimationFrame(ref2);
+            }
+            requestAnimationFrame(ref2);
+        }
+        // start_ref2(button);
 
         // (디버깅) mousedown 키 표시 로그 남기기
         if (false){
@@ -72,6 +165,21 @@ class Mouse {
             console.log($mouse.downTarget[button]);
         }
     };
+    
+    click(e: MouseEvent) {
+        // (지울거)
+        controller.run("mouseclick", e, [this.clickCount, "unsure"]);
+
+
+        // $mouse.clickCount++;
+
+        // if ($mouse.clickCount === 1) {
+        //     // 더블클릭 이벤트 실행
+        //     controller.run("mouseclick", e, [this.clickCount, "unsure"]);
+        // }
+    };
+    clickend(e: MouseEvent) {
+    };
 
     /**
      * 마우스가 움직이면 실행되는 함수
@@ -80,11 +188,20 @@ class Mouse {
      * @param {TMouseMoveType} type 함수 실행 시 해당 이벤트 실행의 원인이 move인지 drag인지 구분하기 위한 인자
      */
     move(e: MouseEvent, type:TMouseMoveType) {
+        // 만약 위치가 변하지 않았다면 return 하기
+        if ($mouse.position.x === e.clientX && $mouse.position.y === e.clientY){
+            // (디버깅) 콘솔에 move 이벤트 실행 안 됬다고 로그 남기기
+            if (false){
+                console.log(`%creturn%c   move 이벤트가 실행되었지만 위치가 변하지 않았습니다.`,
+                    "color: red; font-weight: bold; font-size: 2em;","");
+            };
+            return;
+        }
         // (디버깅) 이벤트 실행 원인 로그 남기기
         if (false){
             console.log(`%c${type}%c로 인해 %cmousemove%c 이벤트 발생`,
                 "color: cyan; font-weight: bold;","","color: yellow; font-weight: bold;","");
-        }
+        };
 
         // 위치 저장
         $mouse.position = new Position(e.clientX, e.clientY);
@@ -93,9 +210,9 @@ class Mouse {
         // 지금 마우스 아래 있는 요소 저장
         $mouse.moveTarget = e.target as HTMLElement;
 
-        
+
         // (디버깅) dragstart 키 표시 로그 남기기
-        if (true){
+        if (false){
             if (($mouse.isDown.left && !$mouse.isDragging.left) || ($mouse.isDown.wheel && !$mouse.isDragging.wheel) || ($mouse.isDown.right && !$mouse.isDragging.right)) {
                 const button:TMouseKeys = $mouse.isDown.left ? "left" : $mouse.isDown.wheel ? "wheel" : "right";
 
@@ -103,25 +220,23 @@ class Mouse {
                     "color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","","color: cyan; font-weight: bold;","");
             }
         }
-        // 마우스가 눌려있으면 드래그 중으로 표시
-        if ($mouse.isDown.left) { // 마우스 왼쪽 버튼이 눌려있으면
-            // 왼쪽 버튼 드래그 중으로 표시
-            $mouse.isDragging.left = true;
+
+        const buttons:TMouseKeys[] = ["left", "wheel", "right"];
+        buttons.forEach((button) => {
+            // 만약 버튼이 눌려있는 상태라면 해당 버튼을 드래그 중으로 표시
+            if ($mouse.isDown[button]){
+                $mouse.isDragging[button] = true;
+            }
+            // 드래그 중이라면 콘솔에 드래그 중이라고 로그 남기기
+            if (false) {
+                if ($mouse.isDragging[button]){
+                    console.log(`[Mouse Drag] : %c${button}%c`,
+                                "color: cyan; font-weight: bold;","");
+                }
+            }
             // 드래그 거리 저장
-            $mouse.draggedSize.left = new Size(e.clientX - $mouse.downStartPosition.left.x!, e.clientY - $mouse.downStartPosition.left.y!);
-        }
-        if ($mouse.isDown.wheel) { // 마우스 휠 버튼이 눌려있으면
-            // 휠 버튼 드래그 중으로 표시
-            $mouse.isDragging.wheel = true;
-            // 드래그 거리 저장
-            $mouse.draggedSize.wheel = new Size(e.clientX - $mouse.downStartPosition.wheel.x!, e.clientY - $mouse.downStartPosition.wheel.y!);
-        }
-        if ($mouse.isDown.right) { // 마우스 오른쪽 버튼이 눌려있으면
-            // 오른쪽 버튼 드래그 중으로 표시
-            $mouse.isDragging.right = true;
-            // 드래그 거리 저장
-            $mouse.draggedSize.right = new Size(e.clientX - $mouse.downStartPosition.right.x!, e.clientY - $mouse.downStartPosition.right.y!);
-        }
+            $mouse.draggedSize[button] = new Size(e.clientX - $mouse.downStartPosition[button].x!, e.clientY - $mouse.downStartPosition[button].y!);
+        });
 
 
         // (디버깅) mousemove 값 로그 남기기

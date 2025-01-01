@@ -12,6 +12,10 @@ export function genID():string {
 
 // 전역 변수들을 담은 객체
 class _$g{
+    // 컨트롤 관련
+    mouseHoldingStartTime:number = 500;   // 홀딩으로 인정할 시간 (ms)
+
+    // UI 관련
     AreaHandleThickness:number = 20;    // Area 컨트롤러 두께
     // Workspace:IWorkspaceArea[] = [];    // 워크스페이스로 변한된 Area들
 };
