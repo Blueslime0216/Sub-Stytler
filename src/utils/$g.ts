@@ -12,8 +12,11 @@ export function genID():string {
 
 // 전역 변수들을 담은 객체
 class _$g{
+    // 불러온 코드들
+    imported:string[] = [];
     // 컨트롤 관련
     mouseHoldingStartTime:number = 500;   // 홀딩으로 인정할 시간 (ms)
+    mouseMultiClickEndTime:number = 500;   // 추가적인 클릭을 기다릴 시간 (ms)
 
     // UI 관련
     AreaHandleThickness:number = 20;    // Area 컨트롤러 두께

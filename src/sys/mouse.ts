@@ -12,6 +12,9 @@ import controller from "./controller";
 type IMouseKeys_boolean = {
     [key in TMouseKeys]:boolean;
 };
+type IMouseKeys_number = {
+    [key in TMouseKeys]:number;
+};
 type IMouseKeys_position = {
     [key in TMouseKeys]:Position;
 };
@@ -34,7 +37,7 @@ class Mouse {
     position_offset:TPosition = new Position(null, null); // 마우스 모듈 내에서의 상대 위치 (px)
     
     // 마우스 연속 클릭 횟수를 저장할 변수
-    clickCount:number = 0;
+    clickCount:IMouseKeys_number = { left: 0, wheel: 0, right: 0 };
 
     // 마우스 클릭 관련
     // 각 마우스 누른 여부 (클릭이건 드래그건 암튼 눌려졌는가)
@@ -80,6 +83,9 @@ class Mouse {
         // mousedown 이벤트 실행
         controller.run("mousedown", e);
 
+        
+        // 클릭 횟수 증가
+        $mouse.clickCount[button]++;
         // click, dblclick, drag 등 판단하는 ref
         const start_ref = (button:TMouseKeys) => {
             // ref에서 사용할 인자 선언하기
@@ -110,49 +116,20 @@ class Mouse {
                     return;
                 };
                 // 설정된 시간이 지나면 holding으로 판단
-                // if (Date.now() - startTime > $g.mouseHoldingStartTime) {
-                //     // 마우스 holding 이벤트 실행
-                //     controller.run("mouseholding", e);
-
-                //     return;
-                // };
-
-                requestAnimationFrame(ref);
-            }
-            requestAnimationFrame(ref);
-        }
-        start_ref(button);
-
-        // 클릭을 멈춘 경우를 감지하기 위한 ref
-        const start_ref2 = (id:string) => {
-            // ref에서 사용할 인자 선언하기
-            const startTime = Date.now();
-
-            const ref2 = () => {
-                // 마우스 클릭/드래그 등 여부 판단 대기 중 로그
-                if (true){
-                    console.log(`%cWaiting for Mouse Click End...`,
-                                "color: orange;");
-                };
-
-                // 만약 마우스 클릭이 실행되면 return
-                if ($mouse.isDown.left || $mouse.isDown.wheel || $mouse.isDown.right) {
-                    return;
-                };
-
-                // 설정된 시간이 지나면 holding으로 판단
                 if (Date.now() - startTime > $g.mouseHoldingStartTime) {
+                    // 마우스 clickend 가상 이벤트 실행
+                    $mouse.clickend(e);
                     // 마우스 holding 이벤트 실행
                     controller.run("mouseholding", e);
 
                     return;
                 };
 
-                requestAnimationFrame(ref2);
+                requestAnimationFrame(ref);
             }
-            requestAnimationFrame(ref2);
+            requestAnimationFrame(ref);
         }
-        // start_ref2(button);
+        start_ref(button);
 
         // (디버깅) mousedown 키 표시 로그 남기기
         if (false){
@@ -167,18 +144,69 @@ class Mouse {
     };
     
     click(e: MouseEvent) {
-        // (지울거)
-        controller.run("mouseclick", e, [this.clickCount, "unsure"]);
+        const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
 
+        // 더 클릭하는 지, 클릭을 멈추는 지 감지하기 위한 ref
+        const start_ref = (button:TMouseKeys) => {
+            // ref에서 사용할 인자 선언하기
+            const startTime = Date.now();
+            const pressed_button:TMouseKeys = button;
+            const pressed_position = new Position(e.clientX, e.clientY);
+            const clickCount_of_pressed_button = $mouse.clickCount[pressed_button];
 
-        // $mouse.clickCount++;
+            const ref = () => {
+                // 마우스 클릭 추가/중단 여부 판단 대기 중 로그
+                if (false){
+                    console.log(`%cWaiting for Mouse Click End/More...`,
+                                "color: orange;");
+                };
 
-        // if ($mouse.clickCount === 1) {
-        //     // 더블클릭 이벤트 실행
-        //     controller.run("mouseclick", e, [this.clickCount, "unsure"]);
-        // }
+                // 만약 마우스가 움직이거나, 설정된 시간이 지나면 clickend
+                let now_position = new Position(e.clientX, e.clientY);
+                if ((pressed_position.x != now_position.x)||(pressed_position.y != now_position.y) || Date.now() - startTime > $g.mouseMultiClickEndTime) {
+                    if (pressed_position !== now_position) {
+                        console.log(`%cClick End%c : 마우스가 움직여서 클릭이 종료되었습니다.`,
+                                    "color: red; font-weight: bold;", "");
+                        console.log(pressed_position, now_position)
+                    } else {
+                        console.log(`%cClick End%c : 설정된 시간이 지나서 클릭이 종료되었습니다.`,
+                                    "color: red; font-weight: bold;", "");
+                    }
+                    // 마우스 clickend 가상 이벤트 실행
+                    $mouse.clickend(e);
+
+                    return;
+                };
+                // 만약 마우스 클릭이 실행되면 추가적인 click이 있다 보고 중단
+                if (!$mouse.isDown[pressed_button]) {
+                    console.log(`%cClick End%c : 마우스 클릭이 실행되어 클릭이 종료되었습니다.`,
+                                "color: red; font-weight: bold;","");
+                    return;
+                };
+
+                requestAnimationFrame(ref);
+            }
+            requestAnimationFrame(ref);
+        }
+        start_ref(button);
+
+        if (this.clickCount[button] === 1) {
+            // 불확정인 click 이벤트 실행
+            controller.run("mouseclick", e, [this.clickCount[button], "unsure"]);
+        } else {
+            // 이전에 실행된 click 이벤트 취소
+            controller.run("mouseclick", e, [this.clickCount[button] - 1, "cancel"]);
+            // 불확정인 click 이벤트 실행
+            controller.run("mouseclick", e, [this.clickCount[button], "unsure"]);
+        }
     };
     clickend(e: MouseEvent) {
+        const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
+
+        // 확정된 click 이벤트 실행
+        controller.run("mouseclick", e, [this.clickCount[button], "sure"]);
+        // 클릭 횟수 초기화
+        this.clickCount[button] = 0;
     };
 
     /**

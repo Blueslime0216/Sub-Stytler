@@ -7,6 +7,18 @@ import $keyboard from "./sys/keyboard";
 import $mouse from "./sys/mouse";
 // UI관련 모듈
 import "./sys/area/area";
+// import해서 실행해야하는 코드들 불러오기
+import importList from "./import";
+import $g from "./utils/$g";
+importList.forEach(async (path) => {
+    await import(path);
+    $g.imported.push(path);
+
+    if (path === importList[importList.length - 1]) {
+        controller.run("load");
+        console.log("모든 코드가 로드되었습니다.");
+    }
+});
 
 
 
@@ -23,3 +35,6 @@ window.addEventListener("mousedown", $mouse.down);                  // 마우스
 window.addEventListener("mouseup", $mouse.up);                      // 마우스를 뗐을 때
 window.addEventListener("mousemove", (e) => $mouse.move(e, "move"));           // 마우스가 움직일 때
 window.addEventListener("drag", (e) => $mouse.move(e, "drag"));                // 드래그 중일 때
+
+
+  
