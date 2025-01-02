@@ -187,7 +187,7 @@ function run(type:eventTypes, e:KeyboardEvent|MouseEvent, ...args:any[]) {
         const e_mouse = e as MouseEvent;
         const button = ['left', 'wheel', 'right'][e_mouse.button] as TMouseKeys;
         // mousedown 실행 로그 남기기
-        if (false) {
+        if (true) {
             console.log(`[Run %cmousedown%c] : %c${button}%c`,
                     "color:yellow;","","color: cyan; font-weight: bold;","");
         }
@@ -237,7 +237,7 @@ function run(type:eventTypes, e:KeyboardEvent|MouseEvent, ...args:any[]) {
         const e_mouse = e as MouseEvent;
         const button = ['left', 'wheel', 'right'][e_mouse.button] as TMouseKeys;
         // mouseclick 실행 로그 남기기
-        if (false) {
+        if (true) {
             console.log(`[Run %cmouseholding%c] : %c${button}%c`,
                     "color:yellow;","","color: cyan; font-weight: bold;","");
         }
@@ -277,7 +277,7 @@ function run(type:eventTypes, e:KeyboardEvent|MouseEvent, ...args:any[]) {
         const e_mouse = e as MouseEvent;
         const button = ['left', 'wheel', 'right'][e_mouse.button] as TMouseKeys;
         // mouseup 실행 로그 남기기
-        if (false) {
+        if (true) {
             console.log(`[Run %cmouseup%c] : %c${button}%c`,
                     "color:yellow;","","color: cyan; font-weight: bold;","");
         }

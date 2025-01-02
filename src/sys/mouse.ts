@@ -44,8 +44,6 @@ class Mouse {
     isDown:IMouseKeys_boolean = { left: false, wheel: false, right: false };
     // 각 마우스 누르기 시작 지점
     downStartPosition:IMouseKeys_position = { left: new Position(null, null), wheel: new Position(null, null), right: new Position(null, null) };
-    // 각 마우스 클릭 상태 여부 (드래그하지 않고 바로 떼었는가)
-    // isClick:IMouseKeys_boolean = { left: false, wheel: false, right: false };
     // 각 마우스 드래그 상태 여부
     isDragging:IMouseKeys_boolean = { left: false, wheel: false, right: false };
     // 마우스가 드래그 된 거리
@@ -56,17 +54,27 @@ class Mouse {
     downTarget:IMouseTargets = { left: null, wheel: null, right: null };
     // 지금 마우스 아래에 있는 요소
     moveTarget:IMouseTarget = null;
+    // 마우스 클릭 해제할 때 아래에 있는 요소
+    upTarget:IMouseTargets = { left: null, wheel: null, right: null };
 
 
     // 마우스를 누르면
     down(e: MouseEvent) {
-        // 마우스 클릭 시작 위치 저장
+        // --------------------------------------------------
+        // $mouse 값 업데이트
+        // --------------------------------------------------
+        // 어떤 버튼이 눌렸는지 저장
         const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
 
-        // $mouse.isClick[button] = false;  // 마우스 버튼 클릭 상태 초기화
-        $mouse.downStartPosition[button] = { x: e.clientX, y: e.clientY }; // 마우스 클릭 시작 위치 저장
-        $mouse.isDown[button] = true; // 눌렸다고 표시하기
-        $mouse.isDragging[button] = false;  // 마우스 버튼 드래그 상태 초기화
+        // 마우스 클릭 시작 위치 저장
+        $mouse.downStartPosition[button] = { x: e.clientX, y: e.clientY }; 
+        // 눌렸다고 표시하기
+        $mouse.isDown[button] = true;
+        // 마우스 버튼 드래그 상태 초기화
+        $mouse.isDragging[button] = false;
+        // 클릭된 요소 저장
+        $mouse.downTarget[button] = e.target as HTMLElement;
+
         // (디버깅) 각 키 표시 상태 로그 남기기
         if (false){
             const value = 'isDown';
@@ -77,15 +85,14 @@ class Mouse {
                         `color: ${$mouse[value].right ? color.true : color.false}; font-weight: bold;`);
         }
 
-        // 클릭된 요소 저장
-        $mouse.downTarget[button] = e.target as HTMLElement;
-
+        
+        // --------------------------------------------------
+        // 컨트롤러 이벤트 실행
+        // --------------------------------------------------
         // mousedown 이벤트 실행
         controller.run("mousedown", e);
-
         
-        // 클릭 횟수 증가
-        $mouse.clickCount[button]++;
+        // ---------- click 관련 판별하는 코드 ----------
         // click, dblclick, drag 등 판단하는 ref
         const start_ref = (button:TMouseKeys) => {
             // ref에서 사용할 인자 선언하기
@@ -101,8 +108,11 @@ class Mouse {
                 
                 // 만약 마우스를 움직인다면 drag로 판단
                 if ($mouse.isDragging[pressed_button]) {
-                    // 마우스 clickend 가상 이벤트 실행
-                    $mouse.clickend(e);
+                    // 만약 클릭을 했었다면 clickend 가상 이벤트 실행
+                    if ($mouse.clickCount[pressed_button] !== 0) {
+                        // 마우스 clickend 가상 이벤트 실행
+                        $mouse.clickend(e);
+                    }
                     // drag 이벤트 실행
                     controller.run("mousedrag", e);
 
@@ -117,8 +127,11 @@ class Mouse {
                 };
                 // 설정된 시간이 지나면 holding으로 판단
                 if (Date.now() - startTime > $g.mouseHoldingStartTime) {
-                    // 마우스 clickend 가상 이벤트 실행
-                    $mouse.clickend(e);
+                    // 만약 클릭을 했었다면 clickend 가상 이벤트 실행
+                    if ($mouse.clickCount[pressed_button] !== 0) {
+                        // 마우스 clickend 가상 이벤트 실행
+                        $mouse.clickend(e);
+                    }
                     // 마우스 holding 이벤트 실행
                     controller.run("mouseholding", e);
 
@@ -127,7 +140,7 @@ class Mouse {
 
                 requestAnimationFrame(ref);
             }
-            requestAnimationFrame(ref);
+            ref();
         }
         start_ref(button);
 
@@ -144,6 +157,9 @@ class Mouse {
     };
     
     click(e: MouseEvent) {
+        // (할일) 이 클릭 휫수 증가하는 코드 위치 조정하기
+        // 클릭 횟수 증가
+        // $mouse.clickCount[button]++;
         const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
 
         // 더 클릭하는 지, 클릭을 멈추는 지 감지하기 위한 ref
@@ -164,14 +180,14 @@ class Mouse {
                 // 만약 마우스가 움직이거나, 설정된 시간이 지나면 clickend
                 let now_position = new Position(e.clientX, e.clientY);
                 if ((pressed_position.x != now_position.x)||(pressed_position.y != now_position.y) || Date.now() - startTime > $g.mouseMultiClickEndTime) {
-                    if (pressed_position !== now_position) {
-                        console.log(`%cClick End%c : 마우스가 움직여서 클릭이 종료되었습니다.`,
-                                    "color: red; font-weight: bold;", "");
-                        console.log(pressed_position, now_position)
-                    } else {
-                        console.log(`%cClick End%c : 설정된 시간이 지나서 클릭이 종료되었습니다.`,
-                                    "color: red; font-weight: bold;", "");
-                    }
+                    // if (pressed_position !== now_position) {
+                    //     console.log(`%cClick End%c : 마우스가 움직여서 클릭이 종료되었습니다.`,
+                    //                 "color: red; font-weight: bold;", "");
+                    //     console.log(pressed_position, now_position)
+                    // } else {
+                    //     console.log(`%cClick End%c : 설정된 시간이 지나서 클릭이 종료되었습니다.`,
+                    //                 "color: red; font-weight: bold;", "");
+                    // }
                     // 마우스 clickend 가상 이벤트 실행
                     $mouse.clickend(e);
 
@@ -179,8 +195,8 @@ class Mouse {
                 };
                 // 만약 마우스 클릭이 실행되면 추가적인 click이 있다 보고 중단
                 if (!$mouse.isDown[pressed_button]) {
-                    console.log(`%cClick End%c : 마우스 클릭이 실행되어 클릭이 종료되었습니다.`,
-                                "color: red; font-weight: bold;","");
+                    // console.log(`%cClick End%c : 마우스 클릭이 실행되어 클릭이 종료되었습니다.`,
+                    //             "color: red; font-weight: bold;","");
                     return;
                 };
 
@@ -190,23 +206,23 @@ class Mouse {
         }
         start_ref(button);
 
-        if (this.clickCount[button] === 1) {
+        if ($mouse.clickCount[button] === 1) {
             // 불확정인 click 이벤트 실행
-            controller.run("mouseclick", e, [this.clickCount[button], "unsure"]);
+            controller.run("mouseclick", e, [$mouse.clickCount[button], "unsure"]);
         } else {
             // 이전에 실행된 click 이벤트 취소
-            controller.run("mouseclick", e, [this.clickCount[button] - 1, "cancel"]);
+            controller.run("mouseclick", e, [$mouse.clickCount[button] - 1, "cancel"]);
             // 불확정인 click 이벤트 실행
-            controller.run("mouseclick", e, [this.clickCount[button], "unsure"]);
+            controller.run("mouseclick", e, [$mouse.clickCount[button], "unsure"]);
         }
     };
     clickend(e: MouseEvent) {
         const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
 
         // 확정된 click 이벤트 실행
-        controller.run("mouseclick", e, [this.clickCount[button], "sure"]);
+        controller.run("mouseclick", e, [$mouse.clickCount[button], "sure"]);
         // 클릭 횟수 초기화
-        this.clickCount[button] = 0;
+        $mouse.clickCount[button] = 0;
     };
 
     /**
