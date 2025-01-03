@@ -157,64 +157,63 @@ class Mouse {
     };
     
     click(e: MouseEvent) {
-        // (할일) 이 클릭 휫수 증가하는 코드 위치 조정하기
-        // 클릭 횟수 증가
-        // $mouse.clickCount[button]++;
         const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
+
+        // 클릭 횟수 증가
+        $mouse.clickCount[button]++;
 
         // 더 클릭하는 지, 클릭을 멈추는 지 감지하기 위한 ref
         const start_ref = (button:TMouseKeys) => {
             // ref에서 사용할 인자 선언하기
             const startTime = Date.now();
             const pressed_button:TMouseKeys = button;
-            const pressed_position = new Position(e.clientX, e.clientY);
+            const pressed_position = new Position($mouse.position.x, $mouse.position.y);
             const clickCount_of_pressed_button = $mouse.clickCount[pressed_button];
 
             const ref = () => {
                 // 마우스 클릭 추가/중단 여부 판단 대기 중 로그
-                if (false){
+                if (true){
                     console.log(`%cWaiting for Mouse Click End/More...`,
                                 "color: orange;");
                 };
 
                 // 만약 마우스가 움직이거나, 설정된 시간이 지나면 clickend
-                let now_position = new Position(e.clientX, e.clientY);
+                let now_position = new Position($mouse.position.x, $mouse.position.y);
                 if ((pressed_position.x != now_position.x)||(pressed_position.y != now_position.y) || Date.now() - startTime > $g.mouseMultiClickEndTime) {
-                    // if (pressed_position !== now_position) {
-                    //     console.log(`%cClick End%c : 마우스가 움직여서 클릭이 종료되었습니다.`,
-                    //                 "color: red; font-weight: bold;", "");
-                    //     console.log(pressed_position, now_position)
-                    // } else {
-                    //     console.log(`%cClick End%c : 설정된 시간이 지나서 클릭이 종료되었습니다.`,
-                    //                 "color: red; font-weight: bold;", "");
-                    // }
+                    if ((pressed_position.x != now_position.x)||(pressed_position.y != now_position.y)) {
+                        console.log(`%cClick End%c : 마우스가 움직여서 클릭이 종료되었습니다.`,
+                                    "color: red; font-weight: bold;", "");
+                        console.log(pressed_position, now_position)
+                    } else {
+                        console.log(`x : ${pressed_position.x} y : ${pressed_position.y}, x : ${now_position.x} y : ${now_position.y}`);
+                        console.log(`%cClick End%c : 설정된 시간이 지나서 클릭이 종료되었습니다.`,
+                                    "color: red; font-weight: bold;", "");
+                    }
                     // 마우스 clickend 가상 이벤트 실행
                     $mouse.clickend(e);
 
                     return;
                 };
                 // 만약 마우스 클릭이 실행되면 추가적인 click이 있다 보고 중단
-                if (!$mouse.isDown[pressed_button]) {
-                    // console.log(`%cClick End%c : 마우스 클릭이 실행되어 클릭이 종료되었습니다.`,
-                    //             "color: red; font-weight: bold;","");
+                if (clickCount_of_pressed_button !== $mouse.clickCount[pressed_button]) {
+                    console.log(`%cClick End%c : 마우스 클릭이 실행되어 클릭이 종료되었습니다.`,
+                                "color: red; font-weight: bold;","");
                     return;
                 };
 
                 requestAnimationFrame(ref);
             }
-            requestAnimationFrame(ref);
+            ref();
         }
         start_ref(button);
 
-        if ($mouse.clickCount[button] === 1) {
-            // 불확정인 click 이벤트 실행
-            controller.run("mouseclick", e, [$mouse.clickCount[button], "unsure"]);
-        } else {
+        // 일단 클릭이 들어왔으니깐 컨트롤러 클릭 이벤트 실행
+        if ($mouse.clickCount[button] !== 1) {  // 첫 클릭이라면 이전에 실행된 취소할 클릭이 없으니 넘기기
             // 이전에 실행된 click 이벤트 취소
             controller.run("mouseclick", e, [$mouse.clickCount[button] - 1, "cancel"]);
-            // 불확정인 click 이벤트 실행
-            controller.run("mouseclick", e, [$mouse.clickCount[button], "unsure"]);
         }
+        // 불확정인 click 이벤트 실행
+        controller.run("mouseclick", e, [$mouse.clickCount[button], "unsure"]);
     };
     clickend(e: MouseEvent) {
         const button:TMouseKeys = ["left", "wheel", "right"][e.button] as TMouseKeys;
