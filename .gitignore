@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # 직접 추가
-old/*
+old
