@@ -1,6 +1,11 @@
 /* ==================================================================================================== */
 /* 전체 UI 스타일 및 레이아웃 정의 */
 /* ==================================================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 body {
     background-color: #121212;
     color: #ffffff;
@@ -14,7 +19,7 @@ body {
     position: fixed;
     background: #1e1e1e;
     border: 1px solid #333;
-    transition: all 0.2s ease-in-out;
+    /* transition: all 0.2s ease-in-out; */
 }
   
 .border {
