@@ -174,6 +174,11 @@ interface debugSettings {
     print_when_mouseup: boolean;
     print_when_mousewheel: boolean;
 
+    // UI 관련
+    show_hitbox_for_adjacent_detection: boolean;
+    hitbox_for_adjacent_detection_color: string;
+    hitbox_for_adjacent_detection_delay: number;
+
     // 시스템 관련
     print_when_resize: boolean;
     print_when_load: boolean;

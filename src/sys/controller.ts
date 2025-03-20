@@ -472,6 +472,7 @@ function mousedragstart(e:MouseEvent, ...args:any) {
 // ==================== mousedrag ====================
 function mousedrag(e:MouseEvent, ...args:any) {
     // ---------- 인자 정리하기 ----------
+    //@ts-ignore e_mouse의 .button을 사용하지 않아서 에러 뜸, 그냥 무시하자
     const e_mouse = e as MouseEvent;
     const button = args[0] as TMouseKeys;
     // ---------- mousedrag 실행 로그 남기기 ----------

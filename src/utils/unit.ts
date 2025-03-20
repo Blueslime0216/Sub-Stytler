@@ -33,3 +33,13 @@ export function px2vw(px: number): number {
 export function px2vh(px: number): number {
     return px / window.innerHeight * 100;
 }
+
+// 현재 방향의 반대를 반환하는 함수
+export function getOppositeSide(side: TSide): TSide {
+    switch (side) {
+        case 'left': return 'right';
+        case 'top': return 'bottom';
+        case 'right': return 'left';
+        case 'bottom': return 'top';
+    }
+}

@@ -9,7 +9,7 @@
 import $keyboard from '../../sys/keyboard';
 import $mouse from '../../sys/mouse';
 import $g from '../../utils/$g';
-import { px2vh, px2vw } from '../../utils/unit';
+import { getOppositeSide, px2vh, px2vw } from '../../utils/unit';
 import { Area } from './Area';
 
 
@@ -36,8 +36,6 @@ export class Border {
     // 개인 변수
     _is_resizing: boolean = false;
     _is_canceled: boolean = false;
-    // 같이 움직여야 할 같은 선상의 다른 Border들을 저장
-    private _linked_borders: Border[] = [];
 
     // 외부에서 읽기 전용으로 제공되는 getter
     get id() { return this._id; } // id는 읽기만 가능함
@@ -133,65 +131,100 @@ export class Border {
      * - 같은 선상의 다른 Border들을 찾아 _linked_borders에 저장하여 함께 이동하도록 준비합니다.
      */
     startResize() {
-        // 히트박스 설정 (현재 Border의 위치와 크기를 기준으로 생성)
-        let hitbox = {
-            left: this.x,
-            top: this.y,
-            right: this.x + (this.side === 'left' || this.side === 'right' ? px2vw($g.AreaBorderThickness) : this.size),
-            bottom: this.y + (this.side === 'top' || this.side === 'bottom' ? px2vh($g.AreaBorderThickness) : this.size),
-        };
-        const sideMargine = 0.1;
-        const frontMargine = 0.2;
-        const frontSize = 0.5;
+        this.detectLinkedBorders();
+    }
+
+    /**
+     * 이 경계가 움직일 때 같이 움직일 경계 검색
+     * @returns 인접한 Border 배열
+     */
+    detectLinkedBorders() {
+        // 이 Border와 인접한 Area를 찾기
+        const adjacentAreas = this.detectAdjacentAreas();
+        // 겹치는 영역을 하이라이트 하기
+        adjacentAreas.forEach(area => {
+            area.highlight();
+        });
+
+        // $g.linkedAreas에 추가하기
+        adjacentAreas.forEach(area => {
+            if (!$g.linkedAreas.includes(area)) { // 만약 없는 경우
+                $g.linkedAreas.push(area); // 추가
+
+                // area의 특정 방향의 border 찾기
+                const adjacentBorder = area.borders[getOppositeSide(this.side)]!
+                // $g.linkedBorders에 없다면 추가
+                if (!$g.linkedBorders.includes(adjacentBorder)) {
+                    $g.linkedBorders.push(adjacentBorder);
+
+                    // 추가된 Border의 인접한 Border들도 찾아서 추가
+                    adjacentBorder.detectLinkedBorders();
+                }
+            }
+        });
+    }
+    /**
+     * 이 경계와 인접한 Area를 찾아 반환하는 함수
+     * @returns 인접한 Area 배열
+     */
+    detectAdjacentAreas(): Area[] {
+        // 히트박스 설정
+        const sideMargin = 0.1; // 옆의 Area가 잘못 선택되는 것을 방지하기 위한 여백
+        const frontMargin = 0.2; // 본인이 선택되는 것을 방지하기 위해 조금 떨어트려 놓기
+        const frontSize = 0.5; // 히트박스 두께, 이 영역과 겹치면 감지됨
+        let hitbox = { left: 0, top: 0, right: 0, bottom: 0 };
         switch (this.side) {
             case 'left':
                 hitbox = {
-                    left: this.x - frontMargine - frontSize,
-                    top: this.y + sideMargine,
-                    right: this.x - frontMargine,
-                    bottom: this.y + this.size - sideMargine,
+                    left: this.x - frontMargin - frontSize,
+                    top: this.y + sideMargin,
+                    right: this.x - frontMargin,
+                    bottom: this.y + this.size - sideMargin,
                 }
                 break;
             case 'top':
                 hitbox = {
-                    left: this.x + sideMargine,
-                    top: this.y - frontMargine - frontSize,
-                    right: this.x + this.size - sideMargine,
-                    bottom: this.y - frontMargine,
+                    left: this.x + sideMargin,
+                    top: this.y - frontMargin - frontSize,
+                    right: this.x + this.size - sideMargin,
+                    bottom: this.y - frontMargin,
                 }
                 break;
             case 'right':
                 hitbox = {
-                    left: this.x + this.size + frontMargine,
-                    top: this.y + sideMargine,
-                    right: this.x + this.size + frontMargine + frontSize,
-                    bottom: this.y + this.size - sideMargine,
+                    left: this.x + frontMargin,
+                    top: this.y + sideMargin,
+                    right: this.x + frontMargin + frontSize,
+                    bottom: this.y + this.size - sideMargin,
                 }
                 break;
             case 'bottom':
                 hitbox = {
-                    left: this.x + sideMargine,
-                    top: this.y + frontMargine,
-                    right: this.x + this.size - sideMargine,
-                    bottom: this.y + this.size + frontMargine + frontSize,
+                    left: this.x + sideMargin,
+                    top: this.y + frontMargin,
+                    right: this.x + this.size - sideMargin,
+                    bottom: this.y + frontMargin + frontSize,
                 }
                 break
         }
-        // 해당 히트박스위 위치와 크기의 div를 만들어서 화면에 표시하고 삭제
-        const hitboxElement = document.createElement('div');
-        hitboxElement.style.position = 'fixed';
-        hitboxElement.style.left = `${hitbox.left}vw`;
-        hitboxElement.style.top = `${hitbox.top}vh`;
-        hitboxElement.style.width = `${hitbox.right - hitbox.left}vw`;
-        hitboxElement.style.height = `${hitbox.bottom - hitbox.top}vh`;
-        hitboxElement.style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
-        document.body.appendChild(hitboxElement);
-        setTimeout(() => {
-            document.body.removeChild(hitboxElement);
-        }, 500);
+
+        // (디버깅) 히트박스를 시각적으로 표시
+        if ($g.debug.show_hitbox_for_adjacent_detection) {
+            const hitboxElement = document.createElement('div');
+            hitboxElement.style.position = 'fixed';
+            hitboxElement.style.left = `${hitbox.left}vw`;
+            hitboxElement.style.top = `${hitbox.top}vh`;
+            hitboxElement.style.width = `${hitbox.right - hitbox.left}vw`;
+            hitboxElement.style.height = `${hitbox.bottom - hitbox.top}vh`;
+            hitboxElement.style.backgroundColor = $g.debug.hitbox_for_adjacent_detection_color;
+            document.body.appendChild(hitboxElement);
+            setTimeout(() => {
+                document.body.removeChild(hitboxElement);
+            }, $g.debug.hitbox_for_adjacent_detection_delay);
+        }
 
         // 모든 영역을 순회하며 히트박스와 겹치는 영역 찾기
-        const overlappingAreas = Array.from($g.elements.values()).filter((area): area is Area => {
+        const adjacentAreas = Array.from($g.elements.values()).filter((area): area is Area => {
             if (!(area instanceof Area)) return false;
 
             const areaBox = {
@@ -208,33 +241,9 @@ export class Border {
                      hitbox.top > areaBox.bottom);
         });
 
-        // 겹치는 영역을 하이라이트 하기
-        overlappingAreas.forEach(area => {
-            area.highlight();
-        });
-    }
-    
-    /**
-     * 같은 선상(수평 또는 수직)에 있는 Border들을 찾아 반환하는 함수
-     * @returns 연결된 Border 배열
-     */
-    private getLinkedBorders(): Border[] {
-        const tolerance = 1; // 좌표 오차 허용 범위
-        if (this.side === 'left' || this.side === 'right') {
-            return Array.from($g.elements.values()).filter((elem): elem is Border => {
-                return (elem instanceof Border) &&
-                    (elem.area !== this.area) &&
-                    ((elem.side === 'left' || elem.side === 'right') && Math.abs(elem.x - this.x) <= tolerance);
-            });
-        } else if (this.side === 'top' || this.side === 'bottom') {
-            return Array.from($g.elements.values()).filter((elem): elem is Border => {
-                return (elem instanceof Border) &&
-                    (elem.area !== this.area) &&
-                    ((elem.side === 'top' || elem.side === 'bottom') && Math.abs(elem.y - this.y) <= tolerance);
-            });
-        }
-        return [];
-    }
+        // 찾은 영역들 반환
+        return adjacentAreas;
+    };
 
     /**
      * 마우스 드래그 중에 호출되는 함수
@@ -267,7 +276,7 @@ export class Border {
         this.area.resize(this.side);
         // 연결된 Border들도 동일한 임시 이동량을 적용하여 업데이트합니다.
         if (!$keyboard.isKeyDown('ControlLeft')){
-            this._linked_borders.forEach(border => {
+            $g.linkedBorders.forEach(border => {
             if (border.side === 'left' || border.side === 'right') {
                 border._temp_x = px2vw($mouse.draggedSize.left.width);
             }
@@ -306,10 +315,14 @@ export class Border {
         this.applyTempChange();
 
         // 연결된 Border들도 임시 이동량을 적용하고, 각 Border의 부모 Area를 업데이트합니다.
-        this._linked_borders.forEach(border => {
+        $g.linkedBorders.forEach(border => {
             border.applyTempChange();
             border.area.resize(border.side);
         });
+
+        // $g.linkedAreas, $g.linkedBorders 초기화
+        $g.linkedAreas = [];
+        $g.linkedBorders = [];
     }
 
     /**

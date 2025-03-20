@@ -19,6 +19,7 @@ class _$g{
     AreaBorderThickness:number = 5;    // Area 컨트롤러 두께 (px)
 
     // ---------- 작업 중에 사용될 것들 ----------
+    linkedAreas:Area[] = [];    // 연결된 Area들
     linkedBorders:Border[] = [];    // 연결된 Border들
 
     // 디버깅 관련
@@ -45,6 +46,11 @@ class _$g{
         print_when_mousedragend: false,
         print_when_mouseup: false,
         print_when_mousewheel: false,
+
+        // UI 관련
+        show_hitbox_for_adjacent_detection: false,
+        hitbox_for_adjacent_detection_color: 'rgba(0, 0, 255, 0.5)',
+        hitbox_for_adjacent_detection_delay: 500,
 
         // 시스템 관련
         print_when_resize: false,

@@ -56,7 +56,8 @@ function init() {
     if (true){
         const Areas = [
             new Area({ x: 0, y: 0, width: 16, height: 50 }),
-            new Area({ x: 16, y: 0, width: 34, height: 50 }),
+            new Area({ x: 16, y: 0, width: 34, height: 25 }),
+            new Area({ x: 16, y: 25, width: 34, height: 25 }),
             new Area({ x: 0, y: 50, width: 33, height: 50 }),
             new Area({ x: 33, y: 50, width: 17, height: 50 }),
 

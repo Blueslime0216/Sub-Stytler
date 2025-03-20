@@ -10,7 +10,7 @@ export class Area {
     // 영역의 고유 ID
     id: string;
     // 네 방향(상, 우, 하, 좌)의 경계(Border) 객체를 저장하는 변수
-    borders: Record<TSide, Border | null> = { top: null, right: null, bottom: null, left: null };
+    borders: Record<TSide, Border|undefined> = { top: undefined, right: undefined, bottom: undefined, left: undefined };
 
     // 영역의 위치와 크기 (vw, vh 단위)
     private _x: number;
@@ -19,11 +19,14 @@ export class Area {
     private _height: number;
 
     // 실행될 이벤트 종류들
-    mouseclick: mouseFuncSet_click[] = [];
+    mousedown: mouseFuncSet[] = [];
 
     // 영역 조정 가능 여부 플래그
+    //@ts-ignore
     private _is_resizable: boolean;
+    //@ts-ignore
     private _is_splitable: boolean;
+    //@ts-ignore
     private _is_joinable: boolean;
 
     // 외부에서 읽기 전용으로 영역의 위치와 크기에 접근할 수 있도록 getter 제공
@@ -111,10 +114,8 @@ export class Area {
      * - 드래그 시작, 진행, 종료 및 우클릭(취소) 이벤트에 대한 콜백을 등록합니다.
      */
     init() {
-        this.mouseclick.push({
+        this.mousedown.push({
             mouse: 'left',
-            clickCount: 1,
-            clickType: 'unsure',
             func: this.highlight.bind(this)
         });
     }
@@ -186,9 +187,8 @@ export class Area {
      * - 영역을 잠시 하이라이트하여 표시합니다.
      */
     highlight() {
-        console.log('highlighted!');
         const areaElement = document.getElementById(this.id)!;
-        areaElement.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+        areaElement.style.backgroundColor = 'rgb(100, 100, 100)';
 
         setTimeout(() => {
             areaElement.style.backgroundColor = '';
