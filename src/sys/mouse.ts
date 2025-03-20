@@ -337,6 +337,7 @@ class Mouse {
         $mouse.position_offset = new Position(e.offsetX, e.offsetY);
         // 지금 마우스 아래 있는 요소 저장
         $mouse.moveTarget = e.target as HTMLElement;
+        //@ts-ignore
         const buttons:TMouseKeys[] = ["left", "wheel", "right"];
         // ---------- 마우스가 움직이면 실행되는 이벤트 실행 ----------
         controller.mousemove(e);
