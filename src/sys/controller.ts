@@ -275,6 +275,17 @@ function mouseclick(e:MouseEvent, ...args:any) {
         };
     });
 }
+// 형식 예제
+if (false) {
+    $g.eventFunctions.mouseclick.push({
+        mouse: 'left',
+        clickCount: 1,
+        clickType: 'unsure',
+        func: (e:MouseEvent) => {
+            console.log('마우스 좌클릭');
+        }
+    });
+}
 
 // ==================== mouseholdstart ====================
 function mouseholdstart(e:MouseEvent, ...args:any) {

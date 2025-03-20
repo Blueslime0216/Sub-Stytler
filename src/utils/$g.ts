@@ -18,6 +18,9 @@ class _$g{
     // UI 관련
     AreaBorderThickness:number = 5;    // Area 컨트롤러 두께
 
+    // ---------- 작업 중에 사용될 것들 ----------
+    linkedBorders:Border[] = [];    // 연결된 Border들
+
     // 디버깅 관련
     debug:debugSettings = {
         // 키보드 관련

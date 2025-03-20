@@ -17,6 +17,9 @@ type TSize = {
     height: number|null;
 };
 
+// 보더의 방향
+type TSide = 'top'|'bottom'|'left'|'right';
+
 // ----------------------------------------------------------------------------------------------------
 // 커스텀 HTML 요소 타입
 // ----------------------------------------------------------------------------------------------------
@@ -208,8 +211,8 @@ interface AreaProps extends Custom_Class_Setup {
 }
   
 interface BorderProps extends Custom_Class_Setup {
-    id: string;
-    side: 'top'|'bottom'|'left'|'right';
+    id?: string;
+    side: TSide;
     x: number;
     y: number;
     size: number;
