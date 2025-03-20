@@ -318,7 +318,7 @@ class Mouse {
         if ($mouse.position.x === e.clientX && $mouse.position.y === e.clientY){
             // 발생했던 상황 1 : cause가 drag일 때 일정한 주기로 마우스가 움직이지 않아도 실행될 때
             // 발생했던 상황 2 : 한 키를 누르고 있을 때 다른 한 키를 누르면, 이상하게 move 이벤트가 한번 실행됨
-            if (true){ // (디버깅) 콘솔에 move 이벤트 실행 안 됬다고 로그 남기기
+            if (false){ // (디버깅) 콘솔에 move 이벤트 실행 안 됬다고 로그 남기기
                 console.log(`%creturn%c   마우스 위치가 변하지 않았기 때문에 move 이벤트가 실행이 취소되었습니다.`,
                     "color: red; font-weight: bold; font-size: 2em;","");
             };

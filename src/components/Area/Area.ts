@@ -43,7 +43,7 @@ export class Area {
      * @param is_splitable - 영역 분할 가능 여부
      * @param is_joinable - 영역 합치기 가능 여부
      */
-    constructor({ id, x, y, width, height, is_resizable, is_splitable, is_joinable }: AreaProps) {
+    constructor({ id=(Math.random().toString(36).substring(2, 14)), x, y, width, height, is_resizable=true, is_splitable=true, is_joinable=true }: AreaProps) {
         this.id = id;
         this._x = x;
         this._y = y;

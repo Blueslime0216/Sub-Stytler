@@ -16,7 +16,7 @@ class _$g{
     mouseHoldingStartTime:number = 500;   // 홀딩으로 인정할 시간 (ms)
     mouseMultiClickEndTime:number = 500;   // 추가적인 클릭을 기다릴 시간 (ms)
     // UI 관련
-    AreaBorderThickness:number = 5;    // Area 컨트롤러 두께
+    AreaBorderThickness:number = 5;    // Area 컨트롤러 두께 (px)
 
     // ---------- 작업 중에 사용될 것들 ----------
     linkedBorders:Border[] = [];    // 연결된 Border들

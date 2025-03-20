@@ -196,7 +196,7 @@ interface debugSettings {
 // }
 
 interface AreaProps extends Custom_Class_Setup {
-    id: string;
+    id?: string;
     x: number;
     y: number;
     width: number;
@@ -205,9 +205,9 @@ interface AreaProps extends Custom_Class_Setup {
     temp_y?: number;
     temp_width?: number;
     temp_height?: number;
-    is_resizable: boolean;
-    is_splitable: boolean;
-    is_joinable: boolean;
+    is_resizable?: boolean;
+    is_splitable?: boolean;
+    is_joinable?: boolean;
 }
   
 interface BorderProps extends Custom_Class_Setup {

@@ -134,22 +134,71 @@ export class Border {
      */
     startResize() {
         // 히트박스 설정 (현재 Border의 위치와 크기를 기준으로 생성)
-        const hitbox = {
+        let hitbox = {
             left: this.x,
             top: this.y,
-            right: this.x + (this.side === 'left' || this.side === 'right' ? $g.AreaBorderThickness : this.size),
-            bottom: this.y + (this.side === 'top' || this.side === 'bottom' ? $g.AreaBorderThickness : this.size),
+            right: this.x + (this.side === 'left' || this.side === 'right' ? px2vw($g.AreaBorderThickness) : this.size),
+            bottom: this.y + (this.side === 'top' || this.side === 'bottom' ? px2vh($g.AreaBorderThickness) : this.size),
         };
+        const sideMargine = 0.1;
+        const frontMargine = 0.2;
+        const frontSize = 0.5;
+        switch (this.side) {
+            case 'left':
+                hitbox = {
+                    left: this.x - frontMargine - frontSize,
+                    top: this.y + sideMargine,
+                    right: this.x - frontMargine,
+                    bottom: this.y + this.size - sideMargine,
+                }
+                break;
+            case 'top':
+                hitbox = {
+                    left: this.x + sideMargine,
+                    top: this.y - frontMargine - frontSize,
+                    right: this.x + this.size - sideMargine,
+                    bottom: this.y - frontMargine,
+                }
+                break;
+            case 'right':
+                hitbox = {
+                    left: this.x + this.size + frontMargine,
+                    top: this.y + sideMargine,
+                    right: this.x + this.size + frontMargine + frontSize,
+                    bottom: this.y + this.size - sideMargine,
+                }
+                break;
+            case 'bottom':
+                hitbox = {
+                    left: this.x + sideMargine,
+                    top: this.y + frontMargine,
+                    right: this.x + this.size - sideMargine,
+                    bottom: this.y + this.size + frontMargine + frontSize,
+                }
+                break
+        }
+        // 해당 히트박스위 위치와 크기의 div를 만들어서 화면에 표시하고 삭제
+        const hitboxElement = document.createElement('div');
+        hitboxElement.style.position = 'fixed';
+        hitboxElement.style.left = `${hitbox.left}vw`;
+        hitboxElement.style.top = `${hitbox.top}vh`;
+        hitboxElement.style.width = `${hitbox.right - hitbox.left}vw`;
+        hitboxElement.style.height = `${hitbox.bottom - hitbox.top}vh`;
+        hitboxElement.style.backgroundColor = 'rgba(0, 0, 255, 0.5)';
+        document.body.appendChild(hitboxElement);
+        setTimeout(() => {
+            document.body.removeChild(hitboxElement);
+        }, 500);
 
         // 모든 영역을 순회하며 히트박스와 겹치는 영역 찾기
-        const overlappingAreas = Array.from($g.elements.values()).filter((elmt): elmt is Area => {
-            if (!(elmt instanceof Area)) return false;
+        const overlappingAreas = Array.from($g.elements.values()).filter((area): area is Area => {
+            if (!(area instanceof Area)) return false;
 
             const areaBox = {
-                left: elmt.x,
-                top: elmt.y,
-                right: elmt.x + elmt.width,
-                bottom: elmt.y + elmt.height,
+                left: area.x,
+                top: area.y,
+                right: area.x + area.width,
+                bottom: area.y + area.height,
             };
 
             // 히트박스와 영역의 겹침 여부 확인

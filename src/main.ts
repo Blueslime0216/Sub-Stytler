@@ -53,50 +53,25 @@ function init() {
     root.appendChild(debugContainer);
 
     // 초기 메인 윈도우 영역 생성
-    const mainArea = new Area({ 
-        id: (Math.random().toString(36).substring(2, 14)), 
-        x: 0, 
-        y: 0, 
-        width: 50, 
-        height: 60, 
-        is_resizable: true, 
-        is_splitable: true, 
-        is_joinable: true,
-    });
-    root.appendChild(mainArea.createElement());
-    const secArea = new Area({ 
-        id: (Math.random().toString(36).substring(2, 14)), 
-        x: 50, 
-        y: 0, 
-        width: 50, 
-        height: 50, 
-        is_resizable: true, 
-        is_splitable: true, 
-        is_joinable: true,
-    });
-    root.appendChild(secArea.createElement());
-    const thirdArea = new Area({ 
-        id: (Math.random().toString(36).substring(2, 14)), 
-        x: 50, 
-        y: 50, 
-        width: 50, 
-        height: 50, 
-        is_resizable: true, 
-        is_splitable: true, 
-        is_joinable: true,
-    });
-    root.appendChild(thirdArea.createElement());
-    const fourthArea = new Area({ 
-        id: (Math.random().toString(36).substring(2, 14)), 
-        x: 0, 
-        y: 60, 
-        width: 50, 
-        height: 40, 
-        is_resizable: true, 
-        is_splitable: true, 
-        is_joinable: true,
-    });
-    root.appendChild(fourthArea.createElement());
+    if (true){
+        const Areas = [
+            new Area({ x: 0, y: 0, width: 16, height: 50 }),
+            new Area({ x: 16, y: 0, width: 34, height: 50 }),
+            new Area({ x: 0, y: 50, width: 33, height: 50 }),
+            new Area({ x: 33, y: 50, width: 17, height: 50 }),
+
+            new Area({ x: 50, y: 0, width: 16, height: 33 }),
+            new Area({ x: 50, y: 33, width: 16, height: 67 }),
+            
+            new Area({ x: 66, y: 0, width: 17, height: 50 }),
+            new Area({ x: 83, y: 0, width: 17, height: 50 }),
+            new Area({ x: 66, y: 50, width: 34, height: 50 }),
+        ];
+        
+        Areas.forEach(area => {
+            root.appendChild(area.createElement());
+        });
+    }
 
     // 이벤트 리스너 등록
     setupEventListeners();
