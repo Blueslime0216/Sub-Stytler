@@ -17,7 +17,8 @@ body {
   
 .area {
     position: fixed;
-    background: #1e1e1e;
+    /* background: #1e1e1e; */
+    background: #1e1e1e99;
     border: 1px solid #333;
     /* transition: all 0.2s ease-in-out; */
     transition: background 0.1s;

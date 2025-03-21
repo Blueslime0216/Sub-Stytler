@@ -178,6 +178,15 @@ interface debugSettings {
     show_hitbox_for_adjacent_detection: boolean;
     hitbox_for_adjacent_detection_color: string;
     hitbox_for_adjacent_detection_delay: number;
+    highlight_area_when_adjacent_detection: boolean;
+    highlight_area_when_adjacent_detection___color: string;
+    highlight_area_when_adjacent_detection___time: number;
+    highlight_area_when_adjacent_detection_with_direction: boolean;
+    highlight_area_when_adjacent_detection_with_direction___color: string;
+    highlight_area_when_adjacent_detection_with_direction___time
+    show_adjustable_area_range: boolean;
+    adjustable_area_range_color: string;
+    adjustable_area_range_time: number;
 
     // 시스템 관련
     print_when_resize: boolean;

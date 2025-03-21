@@ -67,10 +67,12 @@ function init() {
             new Area({ x: 66, y: 0, width: 17, height: 50 }),
             new Area({ x: 83, y: 0, width: 17, height: 50 }),
             new Area({ x: 66, y: 50, width: 34, height: 50 }),
+            
+            // new Area({ x: 0, y: 0, width: 100, height: 100 }),
         ];
         
         Areas.forEach(area => {
-            root.appendChild(area.createElement());
+            root.appendChild(area.areaElement);
         });
     }
 

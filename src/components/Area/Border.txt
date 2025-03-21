@@ -9,7 +9,7 @@
 import $keyboard from '../../sys/keyboard';
 import $mouse from '../../sys/mouse';
 import $g from '../../utils/$g';
-import { getOppositeSide, px2vh, px2vw, showBox } from '../../utils/unit';
+import { getOppositeSide, px2vh, px2vw } from '../../utils/unit';
 import { Area } from './Area';
 
 
@@ -138,14 +138,12 @@ export class Border {
      * @returns 인접한 Border 배열
      */
     detectLinkedBorders() {
-        // ---------- 이 Border와 인접한 Area를 다양하게 찾기 ----------
+        // 이 Border와 인접한 Area를 찾기
         const adjacentAreas = this.detectAdjacentAreas();
         // 겹치는 영역을 하이라이트 하기
-        if ($g.debug.highlight_area_when_adjacent_detection) {
-            adjacentAreas.forEach(area => {
-                area.highlight($g.debug.highlight_area_when_adjacent_detection___color, $g.debug.highlight_area_when_adjacent_detection___time);
-            });
-        }
+        adjacentAreas.forEach(area => {
+            area.highlight();
+        });
 
         // $g.linkedAreas에 추가하기
         adjacentAreas.forEach(area => {
@@ -163,66 +161,7 @@ export class Border {
                 }
             }
         });
-
-        // ---------- 조정 가능한 범위 구하기 ----------
-        // 현재 border의 방향에 따라 감지할 영역 필터링 및 하이라이트
-        if (this.side === 'left' || this.side === 'right') {
-            // 세로 축: 왼쪽과 오른쪽만 감지
-            adjacentAreas.forEach(area => {
-                if (area.x < this.x) { // 왼쪽
-                    $g.area_adjustable_range.min = Math.max($g.area_adjustable_range.min, area.x + $g.AreaMinWidth);
-                    if ($g.debug.highlight_area_when_adjacent_detection_with_direction){
-                        area.highlight('rgba(100, 100, 255, 0.5)');
-                    }
-                } else if (area.x >= this.x) { // 오른쪽
-                    $g.area_adjustable_range.max = Math.min($g.area_adjustable_range.max, area.x + area.width - $g.AreaMinWidth);
-                    if ($g.debug.highlight_area_when_adjacent_detection_with_direction){
-                        area.highlight('rgba(255, 100, 100, 0.5)');
-                    }
-                }
-            });
-            // (디버깅) 조정 가능 영역 표시
-            if ($g.debug.show_adjustable_area_range) {
-                showBox({
-                    id: '조절 가능 영역 표시',
-                    x: $g.area_adjustable_range.min,
-                    y: this.area.y,
-                    width: $g.area_adjustable_range.max - $g.area_adjustable_range.min,
-                    height: this.area.height,
-                    color: $g.debug.adjustable_area_range_color,
-                    time: $g.debug.adjustable_area_range_time,
-                });
-            }
-        } else if (this.side === 'top' || this.side === 'bottom') {
-            // 가로 축: 위쪽과 아래쪽만 감지
-            adjacentAreas.forEach(area => {
-                if (area.y < this.y) { // 위쪽
-                    $g.area_adjustable_range.min = Math.max($g.area_adjustable_range.min, area.y + $g.AreaMinHeight);
-                    if ($g.debug.highlight_area_when_adjacent_detection_with_direction){
-                        area.highlight('rgba(100, 100, 255, 0.5)');
-                    }
-                } else if (area.y >= this.y) { // 아래쪽
-                    $g.area_adjustable_range.max = Math.min($g.area_adjustable_range.max, area.y + area.height - $g.AreaMinHeight);
-                    if ($g.debug.highlight_area_when_adjacent_detection_with_direction){
-                        area.highlight('rgba(255, 100, 100, 0.5)');
-                    }
-                }
-            });
-            // (디버깅) 조정 가능 영역 표시
-            if ($g.debug.show_adjustable_area_range) {
-                showBox({
-                    id: '조절 가능 영역 표시',
-                    x: this.area.x,
-                    y: $g.area_adjustable_range.min,
-                    width: this.area.width,
-                    height: $g.area_adjustable_range.max - $g.area_adjustable_range.min,
-                    color: $g.debug.adjustable_area_range_color,
-                    time: $g.debug.adjustable_area_range_time,
-                });
-            }
-        }
     }
-
     /**
      * 이 경계와 인접한 Area를 찾아 반환하는 함수
      * @returns 인접한 Area 배열
@@ -270,14 +209,17 @@ export class Border {
 
         // (디버깅) 히트박스를 시각적으로 표시
         if ($g.debug.show_hitbox_for_adjacent_detection) {
-            showBox({
-                x: hitbox.left,
-                y: hitbox.top,
-                width: hitbox.right - hitbox.left,
-                height: hitbox.bottom - hitbox.top,
-                color: $g.debug.hitbox_for_adjacent_detection_color,
-                time: $g.debug.hitbox_for_adjacent_detection_delay,
-            });
+            const hitboxElement = document.createElement('div');
+            hitboxElement.style.position = 'fixed';
+            hitboxElement.style.left = `${hitbox.left}vw`;
+            hitboxElement.style.top = `${hitbox.top}vh`;
+            hitboxElement.style.width = `${hitbox.right - hitbox.left}vw`;
+            hitboxElement.style.height = `${hitbox.bottom - hitbox.top}vh`;
+            hitboxElement.style.backgroundColor = $g.debug.hitbox_for_adjacent_detection_color;
+            document.body.appendChild(hitboxElement);
+            setTimeout(() => {
+                document.body.removeChild(hitboxElement);
+            }, $g.debug.hitbox_for_adjacent_detection_delay);
         }
 
         // 모든 영역을 순회하며 히트박스와 겹치는 영역 찾기
@@ -315,57 +257,61 @@ export class Border {
         // 크기 조절 중이라고 설정
         this._is_resizing = true;
 
-        const move_raw = {
+        const move = {
             x: px2vw($mouse.draggedSize.left.width),
             y: px2vh($mouse.draggedSize.left.height),
         };
 
-        // 연결된 Border들 전부 동일한 임시 이동량을 적용하여 업데이트합니다.
-        if (!$keyboard.isKeyDown('ControlLeft')){
-            $g.linkedBorders.forEach(border => {
-                if (((border.area._width + move_raw.x < $g.AreaMinWidth) && border.side == 'right') ||
-                    ((border.area._height - move_raw.y < $g.AreaMinHeight) && border.side == 'top') ||
-                    ((border.area._width - move_raw.x < $g.AreaMinWidth)  && border.side == 'left') ||
-                    ((border.area._height + move_raw.y < $g.AreaMinHeight) && border.side == 'bottom')
-                ){
-                    border.area.highlight('rgba(255, 100, 100, 0.5)');
-                }
-                // 이동 오프셋 업데이트 (최소값을 넘어가지 않게 하기)
-                this.offsetUpdate(border, move_raw);
-                border.update();
-                border.area.resize(border.side);
-            });
+
+        // area의 너비와 높이가 10을 넘어가지 않도록 설정
+        // 이동된 정도 업데이트 (픽셀 값을 vw 또는 vh 단위로 변환)
+        if (this.side === 'right') {
+            if (this.area.width + move.x < 10) {
+                this._temp_x = 10 - this.area.width; // 최소값만큼만 이동
+            } else {
+                this._temp_x = move.x;
+            }
+        } else if (this.side === 'left') {
+            this._temp_x = move.x;
         }
+        if (this.side === 'top' || this.side === 'bottom') {
+            this._temp_y = move.y;
+        }
+
+
+        // 자신의 HTML 요소 스타일 업데이트
+        const borderElement = document.getElementById(this.id);
+        if (!borderElement) return;
+        const thickness = $g.AreaBorderThickness;
+        this.updateElementStyle(borderElement, thickness);
+
+        // 부모 Area의 크기 조절을 호출하여 영역 전체 업데이트
+        this.area.resize(this.side);
+        // // 연결된 Border들도 동일한 임시 이동량을 적용하여 업데이트합니다.
+        // if (!$keyboard.isKeyDown('ControlLeft')){
+        //     $g.linkedBorders.forEach(border => {
+        //     if (border.side === 'left' || border.side === 'right') {
+        //         border._temp_x = px2vw($mouse.draggedSize.left.width);
+        //     }
+        //     if (border.side === 'top' || border.side === 'bottom') {
+        //         border._temp_y = px2vh($mouse.draggedSize.left.height);
+        //     }
+        //         border.update();
+        //         border.area.resize(border.side);
+        //     });
+        // }
     }
 
-    offsetUpdate(border: Border, move: { x: number, y: number }) {
-        // 이동 오프셋 업데이트 (최소값을 넘어가지 않게 하기)
-        switch (border.side) {
-            case 'right':
-                border._temp_x = Math.min(
-                    Math.max(move.x, $g.area_adjustable_range.min - border.area._x - border.area._width),
-                    $g.area_adjustable_range.max - border.area._x - border.area._width
-                );
-                break;
-            case 'top':
-                border._temp_y = Math.min(
-                    Math.max(move.y, $g.area_adjustable_range.min - border.area._y),
-                    $g.area_adjustable_range.max - border.area._y
-                );
-                break;
-            case 'left':
-                border._temp_x = Math.min(
-                    Math.max(move.x, $g.area_adjustable_range.min - border.area._x),
-                    $g.area_adjustable_range.max - border.area._x
-                );
-                break;
-            case 'bottom':
-                border._temp_y = Math.min(
-                    Math.max(move.y, $g.area_adjustable_range.min - border.area._y - border.area._height),
-                    $g.area_adjustable_range.max - border.area._y - border.area._height
-                );
-            break;
-        }
+    /**
+     * 임시(temp) 이동량을 실제 좌표에 반영하고, temp 값을 초기화하는 함수
+     * - 자신의 좌표를 갱신한 후 HTML 스타일도 업데이트합니다.
+     */
+    private applyTempChange() {
+        this._x += this._temp_x;
+        this._y += this._temp_y;
+        this._temp_x = 0;
+        this._temp_y = 0;
+        this.update();
     }
 
     /**
@@ -378,23 +324,18 @@ export class Border {
             this._is_canceled = false;
             return;
         }
+        // 자신의 임시 이동량을 적용
+        this.applyTempChange();
 
         // 연결된 Border들도 임시 이동량을 적용하고, 각 Border의 부모 Area를 업데이트합니다.
         $g.linkedBorders.forEach(border => {
-            border._x += border._temp_x;
-            border._y += border._temp_y;
-            border._temp_x = 0;
-            border._temp_y = 0;
-
-            border.update();
-
-            border.area.endResize(this.side);
+            border.applyTempChange();
+            border.area.resize(border.side);
         });
 
         // $g.linkedAreas, $g.linkedBorders 초기화
         $g.linkedAreas = [];
         $g.linkedBorders = [];
-        $g.area_adjustable_range = { min: 0, max: 100 };
     }
 
     /**
@@ -408,19 +349,7 @@ export class Border {
         this._temp_x = 0;
         this._temp_y = 0;
         this.update();
-        this.area.cancelResize(this.side);
-
-        // 연결된 Border들도 임시 이동량을 초기화하고, 각 Border의 부모 Area를 업데이트합니다.
-        $g.linkedBorders.forEach(border => {
-            border._temp_x = 0;
-            border._temp_y = 0;
-            border.update();
-            border.area.cancelResize(border.side);
-        });
-
-        // $g.linkedAreas, $g.linkedBorders 초기화
-        $g.linkedAreas = [];
-        $g.linkedBorders = [];
+        this.area.resize(this.side);
     }
 
     /**
