@@ -258,13 +258,32 @@ export class Border {
         // 크기 조절 중이라고 설정
         this._is_resizing = true;
 
-        // 이동된 정도 업데이트 (픽셀 값을 vw 또는 vh 단위로 변환)
-        if (this.side === 'left' || this.side === 'right') {
-            this._temp_x = px2vw($mouse.draggedSize.left.width);
+        const move = {
+            x: px2vw($mouse.draggedSize.left.width),
+            y: px2vh($mouse.draggedSize.left.height),
+        };
+
+        // area의 너비와 높이가 10을 넘어가지 않도록 설정
+        if (this.area.width + move.x <= 10) {
+            // 최대로 줄일 수 있는 크기를 계산해 temp_x, temp_y에 저장
+            if (this.side === 'left') {
+                this._temp_x = Math.max(this._temp_x, 10);
+                console.log("left : "+this.area.width);
+            }
+            if (this.side === 'right') {
+                this._temp_x = 0;//Math.min(this._temp_x, 10);
+                console.log("right : "+this.area.width);
+            }
+        } else {
+            // 이동된 정도 업데이트 (픽셀 값을 vw 또는 vh 단위로 변환)
+            if (this.side === 'left' || this.side === 'right') {
+                this._temp_x = move.x;
+            }
+            if (this.side === 'top' || this.side === 'bottom') {
+                this._temp_y = move.y;
+            }
         }
-        if (this.side === 'top' || this.side === 'bottom') {
-            this._temp_y = px2vh($mouse.draggedSize.left.height);
-        }
+
 
         // 자신의 HTML 요소 스타일 업데이트
         const borderElement = document.getElementById(this.id);
@@ -274,19 +293,19 @@ export class Border {
 
         // 부모 Area의 크기 조절을 호출하여 영역 전체 업데이트
         this.area.resize(this.side);
-        // 연결된 Border들도 동일한 임시 이동량을 적용하여 업데이트합니다.
-        if (!$keyboard.isKeyDown('ControlLeft')){
-            $g.linkedBorders.forEach(border => {
-            if (border.side === 'left' || border.side === 'right') {
-                border._temp_x = px2vw($mouse.draggedSize.left.width);
-            }
-            if (border.side === 'top' || border.side === 'bottom') {
-                border._temp_y = px2vh($mouse.draggedSize.left.height);
-            }
-                border.update();
-                border.area.resize(border.side);
-            });
-        }
+        // // 연결된 Border들도 동일한 임시 이동량을 적용하여 업데이트합니다.
+        // if (!$keyboard.isKeyDown('ControlLeft')){
+        //     $g.linkedBorders.forEach(border => {
+        //     if (border.side === 'left' || border.side === 'right') {
+        //         border._temp_x = px2vw($mouse.draggedSize.left.width);
+        //     }
+        //     if (border.side === 'top' || border.side === 'bottom') {
+        //         border._temp_y = px2vh($mouse.draggedSize.left.height);
+        //     }
+        //         border.update();
+        //         border.area.resize(border.side);
+        //     });
+        // }
     }
 
     /**
