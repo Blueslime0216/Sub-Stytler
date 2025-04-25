@@ -22,6 +22,7 @@ import $g from "./utils/$g";
 import { setupEventListeners } from './utils/events';
 // import { state } from './utils/state';
 import { Area } from './components/Area/Area';
+import DebugModal from './components/debugModal';
 
 
 // 처음 사이트 접속 시 실행될 함수
@@ -29,28 +30,9 @@ function init() {
     const root = document.getElementById('app');
     if (!root) return;
 
-    // $g.debug 안에 있는 부울 값들 on/off할 수 있는 UI
-    const debugContainer = document.createElement('div');
-    debugContainer.id = 'debug-container';
-    Object.keys($g.debug).forEach(key => {
-        const label = document.createElement('label');
-        label.textContent = key;
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        // @ts-ignore
-        checkbox.checked = $g.debug[key];
-        checkbox.addEventListener('change', (event) => {
-            // @ts-ignore
-            $g.debug[key] = (event.target as HTMLInputElement).checked;
-        });
-
-        label.appendChild(checkbox);
-        debugContainer.appendChild(label);
-        // 줄바꿈
-        debugContainer.appendChild(document.createElement('br'));
-    });
-    root.appendChild(debugContainer);
+    // 디버그 모달 생성 및 버튼 추가
+    const debugModal = new DebugModal();
+    debugModal.createDebugButton();
 
     // 초기 메인 윈도우 영역 생성
     if (true){

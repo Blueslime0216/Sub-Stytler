@@ -152,45 +152,46 @@ interface mouseFuncSet_click {
 // ----------------------------------------------------------------------------------------------------
 interface debugSettings {
     // 키보드 관련
-    print_when_keydown: boolean;
-    print_when_tab: boolean;
-    print_when_holdstart: boolean;
-    print_when_holding: boolean;
-    print_when_holdend: boolean;
-    print_when_keyup: boolean;
+    print_when_keydown: boolean;                print_when_keydown_tooltip: string;
+    print_when_tab: boolean;                    print_when_tab_tooltip: string;
+    print_when_holdstart: boolean;              print_when_holdstart_tooltip: string;
+    print_when_holding: boolean;                print_when_holding_tooltip: string;
+    print_when_holdend: boolean;                print_when_holdend_tooltip: string;
+    print_when_keyup: boolean;                  print_when_keyup_tooltip: string;
 
     // 마우스 관련
-    print_when_mousedown: boolean;
-    print_when_mouseclick: boolean;
-    print_when_mouseholdstart: boolean;
-    print_when_mouseholding: boolean;
-    print_when_mousemove: boolean;
-    print_when_hover: boolean;
-    print_when_enter: boolean;
-    print_when_leave: boolean;
-    print_when_mousedragstart: boolean;
-    print_when_mousedrag: boolean;
-    print_when_mousedragend: boolean;
-    print_when_mouseup: boolean;
-    print_when_mousewheel: boolean;
+    print_when_mousedown: boolean;              print_when_mousedown_tooltip: string;
+    print_when_mouseclick: boolean;             print_when_mouseclick_tooltip: string;
+    print_when_mouseholdstart: boolean;         print_when_mouseholdstart_tooltip: string;
+    print_when_mouseholding: boolean;           print_when_mouseholding_tooltip: string;
+    print_when_mousemove: boolean;              print_when_mousemove_tooltip: string;
+    print_when_hover: boolean;                  print_when_hover_tooltip: string;
+    print_when_enter: boolean;                  print_when_enter_tooltip: string;
+    print_when_leave: boolean;                  print_when_leave_tooltip: string;
+    print_when_mousedragstart: boolean;         print_when_mousedragstart_tooltip: string;
+    print_when_mousedrag: boolean;              print_when_mousedrag_tooltip: string;
+    print_when_mousedragend: boolean;           print_when_mousedragend_tooltip: string;
+    print_when_mouseup: boolean;                print_when_mouseup_tooltip: string;
+    print_when_mousewheel: boolean;             print_when_mousewheel_tooltip: string;
 
     // UI 관련
-    show_hitbox_for_adjacent_detection: boolean;
-    hitbox_for_adjacent_detection_color: string;
-    hitbox_for_adjacent_detection_delay: number;
-    highlight_area_when_adjacent_detection: boolean;
-    highlight_area_when_adjacent_detection___color: string;
-    highlight_area_when_adjacent_detection___time: number;
-    highlight_area_when_adjacent_detection_with_direction: boolean;
-    highlight_area_when_adjacent_detection_with_direction___color: string;
-    highlight_area_when_adjacent_detection_with_direction___time
-    show_adjustable_area_range: boolean;
-    adjustable_area_range_color: string;
-    adjustable_area_range_time: number;
+    show_hitbox_for_adjacent_detection: boolean;                                show_hitbox_for_adjacent_detection_tooltip: string;
+    hitbox_for_adjacent_detection_color: string;                                hitbox_for_adjacent_detection_color_tooltip: string;
+    hitbox_for_adjacent_detection_delay: number;                                hitbox_for_adjacent_detection_delay_tooltip: string;
+    highlight_area_when_adjacent_detection: boolean;                            highlight_area_when_adjacent_detection_tooltip: string;
+    highlight_area_when_adjacent_detection___color: string;                     highlight_area_when_adjacent_detection___color_tooltip: string;
+    highlight_area_when_adjacent_detection___time: number;                      highlight_area_when_adjacent_detection___time_tooltip: string;
+    highlight_area_when_adjacent_detection_with_direction: boolean;             highlight_area_when_adjacent_detection_with_direction_tooltip: string;
+    highlight_area_when_adjacent_detection_with_direction___left_top_color: string;      highlight_area_when_adjacent_detection_with_direction___left_top_color_tooltip: string;
+    highlight_area_when_adjacent_detection_with_direction___right_bottom_color: string;      highlight_area_when_adjacent_detection_with_direction___right_bottom_color_tooltip: string;
+    highlight_area_when_adjacent_detection_with_direction___time;               highlight_area_when_adjacent_detection_with_direction___time_tooltip: string;
+    show_adjustable_area_range: boolean;                                        show_adjustable_area_range_tooltip: string;
+    adjustable_area_range_color: string;                                        adjustable_area_range_color_tooltip: string;
+    adjustable_area_range_time: number;                                         adjustable_area_range_time_tooltip: string;
 
     // 시스템 관련
-    print_when_resize: boolean;
-    print_when_load: boolean;
+    print_when_resize: boolean;                 print_when_resize_tooltip: string;
+    print_when_load: boolean;                   print_when_load_tooltip: string;
 };
 
 // ----------------------------------------------------------------------------------------------------

@@ -172,12 +172,12 @@ export class Border {
                 if (area.x < this.x) { // 왼쪽
                     $g.area_adjustable_range.min = Math.max($g.area_adjustable_range.min, area.x + $g.AreaMinWidth);
                     if ($g.debug.highlight_area_when_adjacent_detection_with_direction){
-                        area.highlight('rgba(100, 100, 255, 0.5)');
+                        area.highlight($g.debug.highlight_area_when_adjacent_detection_with_direction___left_top_color);
                     }
                 } else if (area.x >= this.x) { // 오른쪽
                     $g.area_adjustable_range.max = Math.min($g.area_adjustable_range.max, area.x + area.width - $g.AreaMinWidth);
                     if ($g.debug.highlight_area_when_adjacent_detection_with_direction){
-                        area.highlight('rgba(255, 100, 100, 0.5)');
+                        area.highlight($g.debug.highlight_area_when_adjacent_detection_with_direction___right_bottom_color);
                     }
                 }
             });

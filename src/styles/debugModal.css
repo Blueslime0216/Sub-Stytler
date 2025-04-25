@@ -1,0 +1,320 @@
+/* 디버그 모달 스타일 */
+.debug-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+
+.debug-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #222;
+  color: #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  width: 60%;
+  /* max-width: 600px; */
+  max-height: 80vh;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.debug-modal-header {
+  padding: 16px;
+  border-bottom: 1px solid #444;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.debug-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.debug-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.debug-modal-close:hover {
+  color: #fff;
+}
+
+/* 스크롤바 스타일 */
+.debug-modal-content {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(80vh - 70px); /* 푸터 제거로 인한 높이 조정 */
+  background-color: #2a2a2a;
+  border-radius: 0 0 8px 8px; /* 하단 모서리 둥글게 */
+  
+  /* Firefox 스크롤바 */
+  scrollbar-width: thin;
+  scrollbar-color: #555 #333;
+}
+
+/* Webkit 기반 브라우저(Chrome, Safari 등)의 스크롤바 스타일 */
+.debug-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.debug-modal-content::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 0 0 8px 0;
+}
+
+.debug-modal-content::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+  border: 2px solid #333;
+  background-clip: padding-box;
+}
+
+.debug-modal-content::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+/* 스크롤바 하단 모서리 */
+.debug-modal-content::-webkit-scrollbar-corner {
+  background-color: #2a2a2a;
+  border-radius: 0 0 8px 0;
+}
+
+.debug-category {
+  margin-bottom: 20px;
+  background-color: #333;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.debug-category-header {
+  border-bottom: 1px solid #444;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.debug-setting-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+
+.debug-setting-row:hover {
+  background-color: #444;
+}
+
+/* 툴팁 스타일 */
+.debug-setting-tooltip {
+  position: relative;
+  display: inline-flex;
+  margin-left: 8px;
+  margin-right: 4px;
+  width: 18px;
+  height: 18px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: help;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.debug-setting-tooltip-content {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 8px;
+  min-width: 200px;
+  max-width: 300px;
+  background-color: #444;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+  display: none;
+  pointer-events: none;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.debug-setting-tooltip-content::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 8px 0 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #444;
+}
+
+.debug-label-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+/* 툴팁이 비어있지 않을 때만 표시 */
+.debug-setting-tooltip.empty {
+  display: none;
+}
+
+.debug-setting-tooltip:hover .debug-setting-tooltip-content {
+  display: block;
+}
+
+.debug-setting-label {
+  flex: 1;
+  cursor: pointer;
+  color: #ddd;
+}
+
+/* 토글 스위치 스타일 */
+.debug-toggle-container {
+  position: relative;
+  width: 40px;
+  height: 20px;
+}
+
+.debug-toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  position: absolute;
+}
+
+.debug-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #555;
+  border-radius: 20px;
+  transition: 0.4s;
+  display: block;
+}
+
+.debug-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+.debug-toggle-input:checked + .debug-toggle-slider {
+  background-color: #4CAF50;
+}
+
+.debug-toggle-input:checked + .debug-toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.debug-color-picker {
+  width: 30px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.debug-opacity-container {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.debug-opacity-label {
+  margin-right: 5px;
+  font-size: 12px;
+  color: #bbb;
+}
+
+.debug-opacity-slider {
+  accent-color: #4CAF50;
+}
+
+.debug-color-container {
+  display: flex;
+  align-items: center;
+}
+
+.debug-input {
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #444;
+  color: #fff;
+}
+
+.debug-input-number {
+  width: 80px;
+}
+
+.debug-input-text {
+  width: 150px;
+}
+
+.debug-unit {
+  margin-left: 5px;
+  color: #bbb;
+}
+
+.debug-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.debug-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  z-index: 998;
+  transition: background-color 0.2s;
+}
+
+.debug-button:hover {
+  background-color: #444;
+} 
