@@ -1,0 +1,108 @@
+**Sub-Stytler: Area UI System - Detailed Implementation Guide**
+
+**1. Core Concept: Area**
+   - An "Area" is a fundamental building block of the UI. It acts as an independent, rectangular container designed to host a single, specific UI "Panel" (e.g., Video Preview, Timeline Editor, Style Manager, etc.).
+   - The entire application workspace is composed of one or more Areas, arranged in a flexible layout.
+   - Users can dynamically manipulate these Areas (resize, split, merge) to customize their workspace.
+   - Each Area is responsible for displaying its assigned Panel and managing its lifecycle within that Area.
+
+**2. Core Area Manipulation Mechanisms (Primarily Drag-and-Drop Based)**
+
+   **2.1. Resizing Areas:**
+      - **User Interaction:** Users resize an Area by clicking and dragging the border (divider line) shared between two adjacent Areas.
+      - **Visual Feedback:**
+         - While dragging, the divider line should visibly move.
+         - A preview (e.g., a semi-transparent overlay or an outline) indicating the potential new dimensions of the affected Areas should be displayed in real-time.
+      - **System Behavior:**
+         - Resizing is typically one-dimensional: dragging a vertical divider resizes horizontally, and dragging a horizontal divider resizes vertically.
+         - When a divider is moved, the Area on one side expands, and the adjacent Area on the other side shrinks by an equivalent amount. The total space occupied by the two areas (along the resized axis) remains constant.
+         - Minimum size constraints must be enforced for Areas to prevent them from becoming too small to be usable. If a resize operation would violate this, it should be limited at the minimum size.
+         - The Panel content within each resized Area must reflow, rescale, or adapt to the new dimensions of its container Area.
+
+   **2.2. Splitting an Area:**
+      - **Purpose:** To divide an existing Area into two new, smaller, adjacent Areas, allowing for more granular layout customization.
+      - **User Interaction (Primary Method: Dragging a Panel to an Edge/Center):**
+         - The user initiates a split by clicking and dragging a Panel. This Panel can be dragged from:
+            - A dedicated "Panel Library" or toolbar.
+            - The header of another existing Area (effectively "moving" that panel and potentially initiating a split at the destination).
+         - As the dragged Panel moves over a potential target Area, visual "drop zones" or "split indicators" must appear. These indicators should highlight regions near the edges (top, bottom, left, right) and potentially the center of the target Area.
+         - **Horizontal Split:** If the user drags the Panel towards the top or bottom edge indicator (or a horizontal center indicator) of the target Area and releases the mouse button:
+            - The target Area is split horizontally into two new Areas (one above the other).
+            - The dragged Panel occupies one of the newly created Areas.
+            - The Panel originally hosted by the target Area (if any) occupies the other new Area. If the target Area was empty, the other new Area will also be empty (or prompt for panel selection).
+         - **Vertical Split:** If the user drags the Panel towards the left or right edge indicator (or a vertical center indicator) of the target Area and releases the mouse button:
+            - The target Area is split vertically into two new Areas (side-by-side).
+            - The dragged Panel occupies one of the newly created Areas.
+            - The Panel originally hosted by the target Area (if any) occupies the other new Area.
+      - **System Behavior:**
+         - Upon a split, the original Area is replaced by two new Areas.
+         - The sum of the dimensions of the two new Areas (along the axis of the split) must equal the dimension of the original Area along that same axis. The dimension perpendicular to the split axis remains the same for both new Areas (inherited from the original Area).
+         - A default split ratio (e.g., 50/50) can be applied, or the ratio can be determined by the precise drop position within the larger split zone.
+         - New draggable dividers are created between the newly formed Areas, allowing them to be resized independently later.
+
+   **2.3. Merging Areas (Combining Two Adjacent Areas):**
+      - **Purpose:** To combine two adjacent Areas into a single, larger Area, simplifying the layout.
+      - **User Interaction:**
+         - The user clicks and drags the divider line separating two adjacent Areas.
+         - To initiate a merge, the user drags this divider all the way to the outer edge of one of the two Areas, effectively "collapsing" that Area to zero (or near-zero) size.
+      - **System Behavior:**
+         - When the drag operation successfully collapses one Area against the boundary of the other, the two Areas merge.
+         - One of the two Areas is eliminated from the layout.
+         - The other Area expands to occupy the combined space previously held by both.
+         - **Content Resolution:** The Panel from the Area that *expands* (i.e., the Area whose boundary was *not* dragged to an extreme) is retained and displayed in the newly merged, larger Area. The Panel from the "collapsed" Area is removed from the active layout.
+
+**3. Assigning and Changing Panel Roles within an Area:**
+   - **Concept:** Each Area can host one specific type of Panel at a time. The "role" of an Area is determined by the Panel it currently displays.
+   - **User Interaction:**
+      - Each Area container must have a clearly identifiable header section.
+      - Within this header, an icon (e.g., a settings cog, a dropdown arrow, or an icon representing the current panel type) must be present.
+      - The user clicks this icon.
+   - **Panel Selector UI:**
+      - Clicking the header icon triggers the display of a "Panel Selector" UI element. This could be a dropdown menu, a popover, or a modal dialog.
+      - The Panel Selector lists all available Panel types that can be hosted in an Area (e.g., "Video Preview," "Subtitle Timeline," "Style Manager," "Effects Library," "Script Viewer," "Audio Waveform," "Notes," "History").
+      - The user selects the desired Panel type from this list.
+   - **System Behavior:**
+      - Upon selection from the Panel Selector, the content of the current Area updates to display the newly chosen Panel.
+      - If the Area previously hosted a different Panel, that Panel instance is unmounted or hidden.
+      - The new Panel component is instantiated (if not already) and rendered within the Area's boundaries, adapting to its current size.
+
+**4. Workspace Persistence and Management:**
+   - **Definition:** The complete layout configuration—which includes the arrangement, sizes, and assigned Panel roles of all Areas on screen—constitutes a "Workspace."
+   - **Saving Workspaces (`.sbsws` files):**
+      - The application must provide a mechanism for users to save their current Workspace layout.
+      - This involves serializing the state of all Areas into a JSON structure. Key data for each area includes:
+         - A unique identifier (if needed for reconstruction).
+         - Dimensions (width, height) and/or relative positioning data.
+         - The type or identifier of the Panel it currently hosts.
+      - This data is stored in a `.sbsws` file, which also includes metadata like `device` ("pc" or "mobile") and `layoutVersion` for compatibility.
+   - **Loading Workspaces:**
+      - Users must be able to load a previously saved `.sbsws` file.
+      - The application will parse this file and reconstruct the entire Area layout and Panel assignments as defined.
+   - **Templates (`.sbslayout` files):**
+      - These are pre-defined Workspace layouts, typically bundled with the application or offered as default starting points (e.g., "Editing Studio," "Minimal Preview").
+      - Users should also be able to save their custom layouts as new `.sbslayout` template files.
+      - Loading a template is functionally similar to loading a workspace file.
+
+**5. Synchronization Across Areas:**
+   - **Mechanism:** A global "Timeline Indicator" (representing, for example, the current video playback time or editing cursor position) must be maintained.
+   - **System Behavior:**
+      - All active Areas, particularly those hosting Panels that are time-sensitive (e.g., Video Preview, Subtitle Timeline, Audio Waveform), must subscribe to this common Timeline Indicator.
+      - When the Timeline Indicator changes (e.g., during video playback, scrubbing), it broadcasts its new state.
+      - Subscribed Panels within their respective Areas must update their display or internal state in real-time to reflect this change, ensuring all relevant parts of the UI are synchronized.
+      - This can be effectively managed using a global state management solution like Zustand.
+
+**6. Pop-out Panels (Detaching Panels into New Windows):**
+   - **Functionality:** Users should be able to "pop out" a Panel from its hosting Area into a new, separate browser window.
+   - **Implementation Details:**
+      - Use the `window.open()` JavaScript API to create the new browser window.
+      - The content of this new window will be the selected Panel, rendered independently.
+      - Crucially, a `BroadcastChannel` API (or a similar cross-window messaging mechanism) must be established for robust two-way communication between the main application window and the popped-out Panel window. This channel is used for:
+         - Sending updates from the main application to the pop-out Panel (e.g., timeline changes, data modifications, theme updates).
+         - Sending user interactions or state changes from the pop-out Panel back to the main application (e.g., if an edit is made in a popped-out script editor).
+
+**7. Technical Implementation Notes (Based on Project Plan):**
+   - **Primary Framework:** React 18.
+   - **State Management:** Zustand is designated, suitable for managing Area layouts, individual Panel states, and the global Timeline Indicator.
+   - **Recommended Folder Structure:**
+      - `src/areas/`: This directory should contain the React components and logic for the Area containers themselves. This includes handling resize, split, and merge interactions, and managing the display of the hosted Panel.
+      - `src/panels/`: This directory should house the individual React components for each distinct type of Panel that can be hosted within an Area.
